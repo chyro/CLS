@@ -1,11 +1,13 @@
 <?php
-//namespace Watchlist\Model;
+namespace Watchlist\Models;
 
-class Movie extends \Phalcon\Mvc\Collection {
+class Movie extends \Phalcore\Models\Mongo {
 	public function getSource() { return "movies"; }
 
-    //public $db;
-    //public function initialize() { $this->db=$this->getDi()->getShared('db'); }   
-    //public function test() { $result=$this->db->query("SELECT * FROM phalcon.system_users"); }
+//Structure:
+//title
+//imdb ID
+//imdb rating
+//imdb url
 }
 

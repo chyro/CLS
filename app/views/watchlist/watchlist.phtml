@@ -1,18 +1,6 @@
-TODO: Each of those should be a partial, so I can show those in sidebars etc.
-<h1>
-	Watch Cal
-	<a href='<?php echo $this->url->get(['for' => 'watched add', 'test'=>'test']);?>'>+</a>
-	<a href='<?php echo $this->url->get(['for' => 'watched all']);?>'>*</a>
-</h1>
-<ul>
-<?php foreach ($watchcal as $movie) { ?>
-    <li><?php echo $movie->title; ?></li>
-<?php } ?>
-</ul>
 <h1>
 	Watchlist
 	<a href='<?php echo $this->url->get(['for' => 'watchlist add']);?>'>+</a>
-	<a href='<?php echo $this->url->get(['for' => 'watchlist all']);?>'>*</a>
 </h1>
 <ul>
 <?php
@@ -34,14 +22,3 @@ $this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
 ?>
 <?php } ?>
 </ul>
-<h1>
-	Recommended
-	<a href='<?php echo $this->url->get(['for' => 'recommended add']);?>'>+</a>
-	<a href='<?php echo $this->url->get(['for' => 'recommended all']);?>'>*</a>
-</h1>
-<ul>
-<?php foreach ($recommended as $movie) { ?>
-	<li><?php echo $movie->title; ?> [add to watchlist] [nope thx]</li>
-<?php } ?>
-</ul>
-

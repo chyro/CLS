@@ -32,5 +32,5 @@ $router->add("/watchlist/recommended/add/:params",
 		['controller' => 'watchlist', 'action' => 'recommendedAdd', 'params' => 1])
 		->setname('recommended add');
 
-$di->set('router', $router);
+$config["di"]->set('router', $router);
 

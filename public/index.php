@@ -1,60 +1,81 @@
 <?php
 
+/*
+TODO:
+\Phalcon shell:
+- bootstrap?
+- healcheck? => check \Phalcon is loaded, check Mongo is loaded
+- Layouts
+- add CSS / JS based on controller / action
+- if Dev, if file.LESS newer than file.css, compile LESS
+- headlink / headscript, with optional merger / minifier
+*/
+
+define('BASE_DIR', dirname(__DIR__));
+define('APP_DIR', BASE_DIR . '/app');
+
 try {
 
-	$config = new Phalcon\Config\Adapter\Ini('../app/config/config.ini');
+	$config = new \Phalcon\Config\Adapter\Ini(APP_DIR . '/config/config.ini');
 
 	//Register an autoloader
-	$loader = new Phalcon\Loader();
-	$loader->registerDirs( [
-		$config->application->controllersDir,
-		$config->application->pluginsDir,
-		$config->application->libraryDir,
-		$config->application->modelsDir,
+	$loader = new \Phalcon\Loader();
+	$loader->registerNamespaces( [
+		"Watchlist\Controllers" => BASE_DIR . '/' . $config->application->controllersDir,
+		"Watchlist\Views" => BASE_DIR . '/' . $config->application->viewsDir,
+		"Watchlist\Models" => BASE_DIR . '/' . $config->application->modelsDir,
+		"Watchlist" => BASE_DIR . '/' . $config->application->appLibDir,
+		"Phalcore" => BASE_DIR . '/' . $config->application->librariesDir . "phalcore/"
 		] )->register();
 
 	//Create a DI
-	$di = new Phalcon\DI\FactoryDefault();
+	$config["di"] = new \Phalcon\DI\FactoryDefault();
 
-	$di->set('session', function() {
-		$session = new Phalcon\Session\Adapter\Files();
+	$config["di"]->set('session', function() {
+		$session = new \Phalcon\Session\Adapter\Files();
 		$session->start();
 		return $session;
 	});
 
 	//Setup the view component
-	$di->set('view', function() use ($config) {
+	$config["di"]->set('view', function() use ($config) {
 		$view = new \Phalcon\Mvc\View();
-		$view->setViewsDir($config->application->viewsDir);
+		$view->setViewsDir(BASE_DIR . '/' . $config->application->viewsDir);
 		return $view;
+	});
+
+	$config["di"]->set('dispatcher', function () {
+		$dispatcher = new \Phalcon\Mvc\Dispatcher();
+		$dispatcher->setDefaultNamespace('Watchlist\Controllers');
+		return $dispatcher;
 	});
 
 	//Route Settings
 	include("../app/config/routes.php");
 
 	//DB Settings
-	$di->set('mongo', function() use ($config) {
+	$config["di"]->set('mongo', function() use ($config) {
 		$mongo = new MongoClient();
 		return $mongo->selectDB($config->database->name);
 	}, true);
 
-	$di->set('collectionManager', function(){
-		return new Phalcon\Mvc\Collection\Manager();
+	$config["di"]->set('collectionManager', function(){
+		return new \Phalcon\Mvc\Collection\Manager();
 	}, true);
 
-	$di->set('url', function(){
+	$config["di"]->set('url', function(){
 		$url = new \Phalcon\Mvc\Url();
 		$url->setBaseUri('/');
 		return $url;
 	});
 
 	//Handle the request
-	$application = new \Phalcon\Mvc\Application($di);
+	$application = new \Phalcon\Mvc\Application($config["di"]);
 
 	echo $application->handle()->getContent();
 
 } catch(\Phalcon\Exception $e) {
-	echo "PhalconException: ", $e->getMessage();
+	echo "\PhalconException: ", $e->getMessage();
 	echo "<pre>"; var_dump($e->getTrace()); echo "</pre>";
 }
 
