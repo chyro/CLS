@@ -10,4 +10,3 @@ class User extends \Phalcore\Models\Mongo {
 //watched (movies, rating, watched date)
 //recommended (movies, rating, recommendation date)
 }
-

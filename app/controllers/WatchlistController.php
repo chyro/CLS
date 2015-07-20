@@ -27,7 +27,7 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	*/
 	public function indexAction()
 	{
-		$user = User::find(["name"=>"Guilhem"]);
+		$user = User::findFirst([["name"=>"Guilhem"]]);
 		$watchcal = $user->watched;
 		$watchlist = $user->watchlist;
 		$recommended = $user->recommended;
@@ -52,7 +52,7 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	*/
 	public function watchlistAction()
 	{
-		$user = User::find(["name"=>"Guilhem"]);
+		$user = User::findFirst([["name"=>"Guilhem"]]);
 		$watchlist = $user->watchlist;
 		if (!is_array($watchlist)) $watchlist = [];
 
@@ -63,7 +63,7 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	}
 
 	/** Watchlist add
-	* 
+	*
 	* Add a movie to the watchlist
 	* TODO: add some JS to help insert the movie,
 	* looking up in the local DB and other sources
@@ -72,13 +72,15 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	public function addAction()
 	{
 		if ($this->request->isPost()) {
-			$user = User::find(["name"=>"Guilhem"]);
+			$user = User::findFirst([["name"=>"Guilhem"]]);
+			$watchlist = $user->watchlist;
+			if (!is_array($watchlist)) $watchlist = [];
 
 			$movie = null;
 			if ($imdb_id = $this->request->getPost('imdb'))
-				$movie = Movie::find(["imdb" => $imdb_id]);
-			if ($title = $this->request->getPost('title'))
-				$movie = Movie::find(["title" => $title]);
+				$movie = Movie::findFirst([["imdb" => $imdb_id]]);
+			if (!$movie && $title = $this->request->getPost('title'))
+				$movie = Movie::findFirst([["title" => $title]]);
 			if (!$movie)
 				throw New Exception("Can't add to watchlist: movie not specified");
 
@@ -90,15 +92,24 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 			if ($rating = $this->request->getPost('rating', 'int'))
 				$item["rating"] = $this->request->getPost('rating', 'int');
 
-			$user->watchlist[] = $item;
+			$watchlist[] = $item;
+			$user->watchlist = $watchlist;
 			// Warning: I don't know the details of Phalcon Mongo libraries,
 			//but this seriously looks non-atomic. Can't I just $push?
 
-			if (!$user->save()) {
-				$this->flash->error($user->getMessages());
+			$success = $user->save();
+			if ($success) {
+				$message = "Movie was added to watchlist. Add another?";
+				$this->view->addedMovie = $movie;
 			} else {
-				$this->flash->success("Movie was added to watchlist. Add another?");
-				//Tag::resetInput();
+				$message = $user->getMessages();
+			}
+
+			$this->view->success = $success;
+			if ($success) {
+				$this->flash->success($message);
+			} else {
+				$this->flash->error($message);
 			}
 		}
 	}
@@ -106,17 +117,17 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	public function deleteAction()
 	{
 		if ($this->request->isPost()) {
-			$user = User::find(["name"=>"Guilhem"]);
+			$user = User::findFirst([["name"=>"Guilhem"]]);
 
 			$movie = null;
 			if ($imdb_id = $this->request->getPost('imdb'))
-				$movie = Movie::find(["imdb" => $imdb_id]);
+				$movie = Movie::findFirst([["imdb" => $imdb_id]]);
 			if ($title = $this->request->getPost('title'))
-				$movie = Movie::find(["title" => $title]);
+				$movie = Movie::findFirst([["title" => $title]]);
 			if (!$movie)
 				throw New Exception("Can't remove from watchlist: movie not specified");
 
-			$user->watchlist = array_filter($user->watchlist, function() use($movie) { return $item->movie != $movie; });
+			$user->watchlist = array_filter($user->watchlist, function() use($movie) { return $item->movie->_id != $movie->_id; });
 
 			if (!$user->save()) {
 				$this->flash->error($user->getMessages());

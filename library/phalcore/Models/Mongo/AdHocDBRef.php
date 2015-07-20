@@ -15,7 +15,7 @@ abstract class AdHocDBRef {
 			];
 	}
 
-	static public expand($ref) {
+	static public function expand($ref) {
 		if (!class_exists($ref["class"])) {
 			throw new MongoException("Error expanding DB value back into a class ($ref)");
 		}
@@ -25,7 +25,7 @@ abstract class AdHocDBRef {
 		//return new $cls($ref["id"]);
 	}
 
-	static public isRef($ref) {
+	static public function isRef($ref) {
 		return (is_array($ref)
 			&& count($ref) == 3
 			&& array_key_exists("collection", $ref)
