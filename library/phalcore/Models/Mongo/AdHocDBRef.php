@@ -8,6 +8,7 @@ namespace Phalcore\Models\Mongo;
 abstract class AdHocDBRef {
 
 	static public function create($item) {
+		//Might be better with ["class" => $class, "dbref" => DBRef::create()] ?
 		return [
 				"collection" => $item->getSource(),
 				"class" => get_class($item),
@@ -21,7 +22,7 @@ abstract class AdHocDBRef {
 		}
 
 		$cls = $ref["class"];
-		return $cls::find($ref["id"]);
+		return $cls::findById($ref["id"]);
 		//return new $cls($ref["id"]);
 	}
 

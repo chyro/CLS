@@ -6,21 +6,16 @@ namespace Phalcore\Models;
  */
 class Mongo extends \Phalcon\Mvc\Collection {
 
-	/* //maybe?
-	static function find($stuff){
-		if (Mongo\AdHocDBRef::isRef($stuff)) {
-			return Mongo\AdHocDBRef::expand($stuff);
-		}
-		return parent::find($stuff);
-	}
-	*/
-
 	/**
 	 * The save function stores the assigned fields into
-	 * the database. Overloaded here to handle exceptions.
+	 * the database. Overloaded to...
+	 * - handle exceptions
+	 * - convert objects to references before saving
 	 */
 	public function save() {
-//exit;
+		//convert objects into refs
+		$this->deepObjToRef();
+
 		//TODO: Put that in a library class.
 		//TODO: use layout
 		set_exception_handler(function(\Exception $e)
@@ -53,57 +48,99 @@ class Mongo extends \Phalcon\Mvc\Collection {
 		});
 		$success = parent::save();
 		restore_exception_handler();
+
+		//convert refs back into objects
+		$this->deepRefToObj();
+
 		return $success;
 	}
 
 	/**
-	 * The assign function stores an array as the fields
-	 * of the object. Overloading here to convert Mongo
-	 * objects into references.
-	 *//*
-//TODO: Go deeper into arrays to convert Mongo objects that are contained within
-	public function assign($fields)
-	{
-		foreach ($fields as $key => $val) {
-			if ($val instanceof Mongo) {
-				if (!isset($val->_id)) $val->save();
-				$fields[$key] = Mongo\AdHocDBRef::create($val);
+	 * Hook converting references to objects when instantiating queried objects
+	 */
+	public function afterFetch() {
+		$this->deepRefToObj();
+	}
+	//Alternatively, if afterFetch doesn't work, overload find and findFirst (and findByID?)
+
+	/**
+	 * Recursive function, for deep object -> reference conversion
+	 * (might be more efficient to pass the array by reference)
+	 */
+	private function _recO2R($blob) {
+		$changed = false;
+		foreach($blob as $key => $val) {
+			if ($val instanceof \Phalcore\Models\Mongo) {
+				$val = Mongo\AdHocDBRef::create($val);
+				$blob[$key] = $val;
+				$changed = true;
+			} elseif (is_array($val)) {
+				list ($converted, $recChanged) = $this->_recO2R($val);
+				if ($recChanged) {
+					$blob[$key] = $converted;
+					$changed = true;
+				}
 			}
 		}
-		$super->assign($fields);
-	}/**/
+		return [$blob, $changed];
+	}
 
 	/**
-	 * The __set function updates one field of the object.
-	 * Overloading here to convert Mongo objects into
-	 * references.
-NOT CALLED - need to serialize on DB save
+	 * Function converting Mongo objects to Mongo-ish references on all
+	 * the fields of the current object, as well as any contained in arrays.
 	 */
-	/*public function __set($key, $val)
-	{
-echo "set ($key: " . var_export($val,true) . ")<br/>";
-//TODO: Go deeper into arrays to convert Mongo objects that are contained within
-		if (Mongo\AdHocDBRef::isRef($val)) {
-			$val = Mongo\AdHocDBRef::create($val);
+	private function deepObjToRef() {
+		$allFields = $this->toArray();
+		foreach ($allFields as $key => $val) {
+			if ($val instanceof \Phalcore\Models\Mongo) {
+				if (!isset($val->_id)) $val->save();
+				$val = Mongo\AdHocDBRef::create($val);
+				$this->$key = $val;
+			} elseif (is_array($val)) {
+				list ($converted, $changed) = $this->_recO2R($val);
+				if ($changed)
+					$this->$key = $converted;
+			}
 		}
-		$this->$key = $val;
-	}*/
+	}
 
 	/**
-	 * The __get function returns the fields of the object.
-	 * Overloading here to convert Mongo references into
-	 * objects.
-NOT CALLED - need to unserialize on DB load
+	 * Recursive function, for deep reference -> object conversion
 	 */
-	/*public function __get($key)
-	{
-echo "get ($key)<br/>";
-//TODO: Go deeper into arrays to convert Mongo objects that are contained within
-		$val = $this->$key;
-		if (Mongo\AdHocDBRef::isRef($val)) {
-			return Mongo\AdHocDBRef::expand($val);
+	private function _recR2O($blob) {
+		$changed = false;
+		foreach($blob as $key => $val) {
+			if (Mongo\AdHocDBRef::isRef($val)) {
+				$val = Mongo\AdHocDBRef::expand($val);
+				$blob[$key] = $val;
+				$changed = true;
+			} elseif (is_array($val)) {
+				list ($converted, $recChanged) = $this->_recR2O($val);
+				if ($recChanged) {
+					$blob[$key] = $converted;
+					$changed = true;
+				}
+			}
 		}
-		return $val;
-	}*/
+		return [$blob, $changed];
+	}
+
+	/**
+	 * Function converting Mongo objects to Mongo-ish references on all
+	 * the fields of the current object, as well as any contained in arrays.
+	 */
+	private function deepRefToObj() {
+		$allFields = $this->toArray();
+		foreach ($allFields as $key => $val) {
+			if (Mongo\AdHocDBRef::isRef($val)) {
+				$val = Mongo\AdHocDBRef::expand($val);
+				$this->$key = $val;
+			} elseif (is_array($val)) {
+				list ($converted, $changed) = $this->_recR2O($val);
+				if ($changed)
+					$this->$key = $converted;
+			}
+		}
+	}
 
 }

@@ -83,8 +83,7 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 				$movie = Movie::findFirst([["title" => $title]]);
 			if (!$movie)
 				throw New Exception("Can't add to watchlist: movie not specified");
-
-			//should check the movie is not in the list yet?
+			//should check the movie is not in the list yet
 
 			$item = [
 					"movie" => $movie,
@@ -105,12 +104,18 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 				$message = $user->getMessages();
 			}
 
+			//* //TODO: Actually display errors and success by flash messages.
 			$this->view->success = $success;
+			$this->view->message = $message;
+			/*/
 			if ($success) {
 				$this->flash->success($message);
 			} else {
 				$this->flash->error($message);
 			}
+			/**/
+
+			$this->view->watchlist = $watchlist;
 		}
 	}
 

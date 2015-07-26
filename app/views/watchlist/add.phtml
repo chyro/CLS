@@ -4,32 +4,27 @@
 </h1>
 <!-- ul>
 <?php
-/*
-$this->url->get(['for' => 'watched']),
-$this->url->get(['for' => 'watched', 'test' => 'test']),
-$this->url->get(['for' => 'watched', 'test' => 123]),
-$this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
-*/
 ?>
-<?php foreach ($watchlist as $movie) { ?>
+<?php foreach ($watchlist as $wMovie): ?>
+	<?php $movie = $wMovie["movie"]; ?>
 	<li><?php echo $movie->title; ?>
+		<?php if (isset($movie->rating)): ?>
+		[<?php echo $movie->rating; ?>]
+		<?php endif; ?>
 		<a href="<?php echo $this->url->get(['for' => 'watched add', 'movie_id' => $movie->_id]); ?>">[mark as watched]</a>
 		<a href="<?php echo $this->url->get(['for' => 'watchlist delete', 'movie_id' => $movie->_id]); ?>">[forget it]</a>
 	</li>
-<?php
-//$url = $this->url->get(['for' => 'homepage']);
-//$a_tag = $this->tag->linkTo(array(array('for' => 'homepage', 'id' => 'backLink'), 'back to homepage'));
-?>
-<?php } ?>
+<?php endforeach; ?>
 </ul-->
 
-<?php /*if ($success): //Actually errors and success are both displayed by flash messages. ?>
-<p>Added <span class="movie_title"><?php echo $movie->title; ?></span>. Add another?</p>
-<?php else: ?>
+<?php if ($success): //TODO: Actually display errors and success by flash messages. ?>
+<p>Added <span class="movie_title"><?php echo $addedMovie->title; ?></span>. Add another?</p>
+<?php endif; ?>
+<?php if ($error): ?>
 <p>Error ($error). Try again?</p>
-<?php endif; */ ?>
+<?php endif; ?>
 
-<p>add form</a>
+<p>add form</p>
 <form method="post">
 	<div><label>Title</label> <input name="title" /></div>
 <p>Field: Movie: On /*focus*/ change, if > 3 letters, Ajax (no more than 1 request at a time) any matching movie, display on the side. Clicking the movie enters the IMDB ID in the field.</p>

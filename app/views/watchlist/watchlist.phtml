@@ -11,14 +11,18 @@ $this->url->get(['for' => 'watched', 'test' => 123]),
 $this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
 */
 ?>
-<?php foreach ($watchlist as $movie) { ?>
+<?php foreach ($watchlist as $wMovie): ?>
+	<?php $movie = $wMovie["movie"]; ?>
 	<li><?php echo $movie->title; ?>
+		<?php if (isset($movie->rating)): ?>
+		[<?php echo $movie->rating; ?>]
+		<?php endif; ?>
 		<a href="<?php echo $this->url->get(['for' => 'watched add', 'movie_id' => $movie->_id]); ?>">[mark as watched]</a>
 		<a href="<?php echo $this->url->get(['for' => 'watchlist delete', 'movie_id' => $movie->_id]); ?>">[forget it]</a>
 	</li>
-<?php
-//$url = $this->url->get(['for' => 'homepage']);
+<?php endforeach; ?>
+<?php /*
+$url = $this->url->get(['for' => 'homepage']);
 //$a_tag = $this->tag->linkTo(array(array('for' => 'homepage', 'id' => 'backLink'), 'back to homepage'));
-?>
-<?php } ?>
+*/ ?>
 </ul>
