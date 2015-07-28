@@ -16,7 +16,9 @@ use Watchlist\Models\User;
 * TODO:
 * - replace "Guilhem" with logged in user
 * - loging in, now that I mention it
-* - inserting content, etc
+* - features
+* - design
+* - all the stuff
 */
 class WatchlistController extends \Phalcon\Mvc\Controller
 {
@@ -63,12 +65,15 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 	}
 
 	/** Watchlist add
-	*
-	* Add a movie to the watchlist
-	* TODO: add some JS to help insert the movie,
-	* looking up in the local DB and other sources
-	* (imdb?) for matches on the title
-	*/
+	 *
+	 * Add a movie to the watchlist
+	 * TODO: add some JS to help insert the movie,
+	 * looking up in the local DB and other sources
+	 * (imdb?) for matches on the title
+	 * http://stackoverflow.com/a/7744369
+	 * http://sg.media-imdb.com/suggests/$titleFirstLetter/$title.json
+	 * http://www.omdbapi.com/?t=$title&y=&plot=short&r=json
+	 */
 	public function addAction()
 	{
 		if ($this->request->isPost()) {
@@ -77,13 +82,20 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 			if (!is_array($watchlist)) $watchlist = [];
 
 			$movie = null;
+			if (!$this->request->getPost('imdb') && !$this->request->getPost('title'))
+				throw new \Exception("Can't add to watchlist: movie not specified");
+
 			if ($imdb_id = $this->request->getPost('imdb'))
 				$movie = Movie::findFirst([["imdb" => $imdb_id]]);
 			if (!$movie && $title = $this->request->getPost('title'))
 				$movie = Movie::findFirst([["title" => $title]]);
-			if (!$movie)
-				throw New Exception("Can't add to watchlist: movie not specified");
-			//should check the movie is not in the list yet
+			if (!$movie && $movieId = $this->dispatcher->getParam('movie_id'))
+				$movie = Movie::findFirst([["_id" => $movieId]]);
+
+			//if (!$movie)
+				//TODO: add movie
+
+			//should check the movie is not in the list yet, and skip
 
 			$item = [
 					"movie" => $movie,
@@ -93,52 +105,53 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 
 			$watchlist[] = $item;
 			$user->watchlist = $watchlist;
-			// Warning: I don't know the details of Phalcon Mongo libraries,
+			//Warning: I don't know the details of Phalcon Mongo libraries,
 			//but this seriously looks non-atomic. Can't I just $push?
 
 			$success = $user->save();
 			if ($success) {
-				$message = "Movie was added to watchlist. Add another?";
+				$message = "Added <span class='movie_title'>" . $movie->title . "</span>. Add another?";
+				// "Movie was added to watchlist. Add another?";
 				$this->view->addedMovie = $movie;
 			} else {
-				$message = $user->getMessages();
+				$message = "Error (" . $user->getMessages() . "). Try again?";
 			}
 
-			//* //TODO: Actually display errors and success by flash messages.
-			$this->view->success = $success;
-			$this->view->message = $message;
-			/*/
 			if ($success) {
 				$this->flash->success($message);
 			} else {
 				$this->flash->error($message);
 			}
-			/**/
 
 			$this->view->watchlist = $watchlist;
 		}
 	}
 
+	/** Watchlist delete
+	 *
+	 * Remove a movie from the watchlist
+	 */
+//TODO: MAKE THAT A POST! Get URL params should be idempotent.
 	public function deleteAction()
 	{
-		if ($this->request->isPost()) {
-			$user = User::findFirst([["name"=>"Guilhem"]]);
+		if (!$movieId = $this->dispatcher->getParam('movie_id'))
+			throw new \Exception("Can't remove from watchlist: movie not specified");
 
-			$movie = null;
-			if ($imdb_id = $this->request->getPost('imdb'))
-				$movie = Movie::findFirst([["imdb" => $imdb_id]]);
-			if ($title = $this->request->getPost('title'))
-				$movie = Movie::findFirst([["title" => $title]]);
-			if (!$movie)
-				throw New Exception("Can't remove from watchlist: movie not specified");
+		$user = User::findFirst([["name"=>"Guilhem"]]);
 
-			$user->watchlist = array_filter($user->watchlist, function() use($movie) { return $item->movie->_id != $movie->_id; });
+		$watchlist = $user->watchlist;
+		$filteredWatchlist = array_filter($user->watchlist,
+			function($item) use($movieId) { return $item["movie"]->_id != $movieId; });
 
-			if (!$user->save()) {
-				$this->flash->error($user->getMessages());
-			} else {
-				$this->flash->success("Movie was removed from watchlist.");
-			}
+		if (count($filteredWatchlist) == count($watchlist))
+			throw new \Exception("Can't remove from watchlist: movie not found in watchlist");
+
+		$user->watchlist = $filteredWatchlist;
+
+		if (!$user->save()) {
+			$this->flash->error("Error (" . $user->getMessages() . "). Try again?");
+		} else {
+			$this->flash->success("Movie was removed from watchlist.");
 		}
 	}
 

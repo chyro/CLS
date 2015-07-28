@@ -3,6 +3,8 @@ namespace Phalcore\Models;
 
 /**
  * Enhanced ORM, with extra convenience features
+ *
+ * TODO maybe: add a "pretty id" autoincrement, for friendlier links than _id?
  */
 class Mongo extends \Phalcon\Mvc\Collection {
 

@@ -23,7 +23,8 @@ $this->url->get(['for' => 'watched', 'test' => 123]),
 $this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
 */
 ?>
-<?php foreach ($watchlist as $movie) { ?>
+<?php foreach ($watchlist as $movie): ?>
+	<?php $movie = $movie["movie"]; ?>
 	<li><?php echo $movie->title; ?>
 		<a href="<?php echo $this->url->get(['for' => 'watched add', 'movie_id' => $movie->_id]); ?>">[mark as watched]</a>
 		<a href="<?php echo $this->url->get(['for' => 'watchlist delete', 'movie_id' => $movie->_id]); ?>">[forget it]</a>
@@ -32,7 +33,7 @@ $this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
 //$url = $this->url->get(['for' => 'homepage']);
 //$a_tag = $this->tag->linkTo(array(array('for' => 'homepage', 'id' => 'backLink'), 'back to homepage'));
 ?>
-<?php } ?>
+<?php endforeach; ?>
 </ul>
 <h1>
 	Recommended

@@ -50,6 +50,11 @@ try {
 		return $dispatcher;
 	});
 
+	//Setup the flash service
+	$config["di"]->set('flash', function () {
+	    return new \Phalcon\Flash\Direct();
+	});
+
 	//Route Settings
 	include("../app/config/routes.php");
 
