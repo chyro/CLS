@@ -17,6 +17,10 @@ Tested with:
 - Phalcon Incubator branch 3.1
 
 TODO:
-- DB init script
+- DB init script (single admin user?)
+- user registration, auth
 - Create a webapp that works offline on mobile
+- user admin dashboard (modules?)
+- move the services out of index.php and into app/config/services.php or app/bootstrap.php
+- hostname, HTTPS on the server?
 

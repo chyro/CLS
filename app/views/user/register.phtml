@@ -1,0 +1,15 @@
+<?php echo Phalcon\Tag::form(array('', 'method' => 'post')); ?>
+
+    <label for="name">Name</label>
+    <?php echo Phalcon\Tag::textField(array('name')); ?>
+
+    <label for="email">Email</label>
+    <?php echo Phalcon\Tag::textField(array('email')); ?>
+
+    <label for="password">Password</label>
+    <?php echo Phalcon\Tag::passwordField(array('password')); ?>
+
+    <?php echo Phalcon\Tag::submitButton('Register'); ?>
+
+<?php echo Phalcon\Tag::endForm(); ?>
+
