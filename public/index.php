@@ -81,7 +81,9 @@ try {
 
 	$config['di']->set('url', function(){
 		$url = new \Phalcon\Mvc\Url();
-		$url->setBaseUri('/');
+		$base = dirname($_SERVER["SCRIPT_NAME"]); // hoping to handle root and subfolder installs // PHP_SELF seems to work as well
+		$base = rtrim($base, '/') . '/'; // making sure there is always a trailing slash
+		$url->setBaseUri($base);
 		return $url;
 	});
 

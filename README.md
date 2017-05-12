@@ -18,5 +18,5 @@ Tested with:
 
 TODO:
 - DB init script
-- URL mechanism for top- / sub-folder, single / multiple vhosts
+- Create a webapp that works offline on mobile
 
