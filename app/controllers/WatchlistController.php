@@ -4,29 +4,29 @@ namespace Watchlist\Controllers;
 use Watchlist\Models\Movie;
 use Watchlist\Models\User;
 
-/** Watchlist Controller
-* 
-* Controller handling actions related to watchlists:
-* - movies to watch
-* - movies watched
-* - recommended movies
-* - movie ratings
-* etc
-*
-* TODO:
-* - replace "Guilhem" with logged in user
-* - loging in, now that I mention it
-* - features
-* - design
-* - all the stuff
-*/
+/**
+ * Watchlist Controller
+ *
+ * Controller handling actions related to watchlists:
+ * - movies to watch
+ * - movies watched
+ * - recommended movies
+ * - movie ratings
+ * etc
+ *
+ * TODO:
+ * - features
+ * - design
+ * - all the stuff
+ */
 class WatchlistController extends \Phalcon\Mvc\Controller
 {
-	/** Watchlist Index
-	* 
-	* Display recently watched movies, upcoming movies,
-	* recommended to me, etc
-	*/
+	/**
+	 * Watchlist Index
+	 *
+	 * Display recently watched movies, upcoming movies,
+	 * recommended to me, etc
+	 */
 	public function indexAction()
 	{
 		$user = User::findFirst([["name"=>"Guilhem"]]);
@@ -47,11 +47,12 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 		$this->view->recommended = $recommended;
 	}
 
-	/** Watchlist list
-	*
-	* Display the movies on the watchlist, sorted
-	* "most want to watch" first
-	*/
+	/**
+	 * Watchlist list
+	 *
+	 * Display the movies on the watchlist, sorted
+	 * "most want to watch" first
+	 */
 	public function watchlistAction()
 	{
 		$user = User::findFirst([["name"=>"Guilhem"]]);
@@ -64,7 +65,8 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 		$this->view->watchlist = $watchlist;
 	}
 
-	/** Watchlist add
+	/**
+	 * Watchlist add
 	 *
 	 * Add a movie to the watchlist
 	 * TODO: add some JS to help insert the movie,
@@ -127,7 +129,8 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 		}
 	}
 
-	/** Watchlist delete
+	/**
+	 * Watchlist delete
 	 *
 	 * Remove a movie from the watchlist
 	 */
@@ -155,11 +158,12 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 		}
 	}
 
-	/** Recommended list
-	* 
-	* Display the movies recommended to me, with
-	* quick-link to add it to the watchlist.
-	*/
+	/**
+	 * Recommended list
+	 *
+	 * Display the movies recommended to me, with
+	 * quick-link to add it to the watchlist.
+	 */
 	public function recommendedAction()
 	{
 		$this->view->recommended = Movie::find([["recommended" => ['$elemMatch' => ["to" => "Guilhem"]]]]);
@@ -170,11 +174,12 @@ class WatchlistController extends \Phalcon\Mvc\Controller
 		//$this->view->recommended = Movie::find([["recommended" => ['$elemMatch' => ["to" => "Guilhem"]]]]);
 	}
 
-	/** Watched Movies
-	* 
-	* Display the movie specified, or if not specified
-	* display all the watched movies.
-	*/
+	/**
+	 * Watched Movies
+	 *
+	 * Display the movie specified, or if not specified
+	 * display all the watched movies.
+	 */
 	public function watchedAction()
 	{
 		//$this->view->watched = Movie::find([["watched" => ['$elemMatch' => ["by" => "Guilhem"]]]]);

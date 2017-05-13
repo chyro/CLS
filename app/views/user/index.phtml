@@ -1,4 +1,7 @@
-Hello user!
+<?php
+$user = $this->session->getUser();
+?>
+Hello <?php echo $user->name; ?>!
 <pre>
-<?php var_dump($_SESSION); ?>
+<?php var_dump($user->toArray()); ?>
 </pre>

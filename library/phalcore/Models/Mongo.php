@@ -6,7 +6,7 @@ namespace Phalcore\Models;
  *
  * TODO maybe: add a "pretty id" autoincrement, for friendlier links than _id?
  */
-class Mongo extends \Phalcon\Mvc\MongoCollection {
+abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
 
 	/**
 	 * The save function stores the assigned fields into

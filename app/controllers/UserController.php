@@ -26,7 +26,7 @@ class UserController extends \Phalcon\Mvc\Controller
 	{
 		if (empty($this->session->getUser())) {
 			$this->flash->error('Not logged in!');
-			return $this->redirect($this->url->get(['for' => 'site top']));
+			return $this->redirect($this->url->get(['for' => 'top']));
 		}
 	}
 
@@ -34,7 +34,7 @@ class UserController extends \Phalcon\Mvc\Controller
 	{
 		if (!empty($this->session->getUser())) {
 			$this->flash->error('Already logged in!');
-			return $this->redirect($this->url->get(['for' => 'site top']));
+			return $this->redirect($this->url->get(['for' => 'top']));
 		}
 
 		if ($this->request->isPost()) {
@@ -57,7 +57,7 @@ class UserController extends \Phalcon\Mvc\Controller
 	{
 		if (!empty($this->session->getUser())) {
 			$this->flash->error('Already logged in!');
-			return $this->redirect($this->url->get(['for' => 'site top']));
+			return $this->redirect($this->url->get(['for' => 'top']));
 		}
 
 		if ($this->request->isPost()) {
@@ -88,15 +88,25 @@ class UserController extends \Phalcon\Mvc\Controller
 	public function profileAction()
 	{
 		if ($this->request->getQuery('user')) {
-			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'show-profile']);
+			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'showProfile']);
 		}
 
 		if (!empty($this->session->getUser())) {
-			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'edit-profile']);
+			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'editProfile']);
 		}
 
 		$this->flash->error('No user specified!');
 		return $this->dispatcher->forward(['controller' => 'index', 'action' => 'index']);
+	}
+
+	public function showProfileAction()
+	{
+		$this->view->user = User::findFirst([['id' => $this->request->getQuery('id')]]);
+	}
+
+	public function editProfileAction()
+	{
+		$this->view->user = $this->session->getUser();
 	}
 }
 
