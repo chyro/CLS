@@ -106,7 +106,37 @@ class UserController extends \Phalcon\Mvc\Controller
 
 	public function editProfileAction()
 	{
-		$this->view->user = $this->session->getUser();
+		$user = $this->session->getUser();
+
+		if ($this->request->isPost()) {
+			//TODO: validate fields
+			$changed = 0;
+			if ($newName = $this->request->getPost('name')) {
+				$user->name = $newName;
+				$changed++;
+			}
+			if ($newEmail = $this->request->getPost('email')) {
+				$user->email = $newEmail;
+				$changed++;
+			}
+			if ($newpass = $this->request->getPost('new-password')
+				&& $againpass = $this->request->getPost('again-password')
+				&& $newpass == $againpass) {
+				if ($this->security->checkHash($this->request->getPost('old-password'), $user->password)) {
+					$user->password = $this->security->hash($newpass);
+					$changed++;
+				} else {
+					$this->flash->error('Failed to change password!');
+				}
+			}
+
+			if ($changed) {
+				$user->save();
+				$this->flash->success('Profile updated');
+			}
+		}
+
+		$this->view->user = $user;
 	}
 }
 
