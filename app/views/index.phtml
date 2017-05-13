@@ -1,8 +1,27 @@
+<?php
+$user = $this->session->getUser();
+//How come when logging out this keeps the value from before logout? Does the controller not run before the layout?
+?>
 <html>
 	<head>
 		<title>Watchlist</title>
 	</head>
 	<body>
+		<div>
+			Nav
+			<ul>
+				<li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
+				<?php if (empty($user)): ?>
+				<li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
+				<li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
+				<?php else: ?>
+				<li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
+				<li>as <?php echo $user->name; ?></li>
+				<li><a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a></li>
+				<li><a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a></li>
+				<?php endif; ?>
+			</ul>
+		</div>
 
 		<h1>Layout: before</h1>
 

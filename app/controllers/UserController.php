@@ -24,7 +24,7 @@ class UserController extends \Phalcon\Mvc\Controller
 
 	public function indexAction()
 	{
-		if (!$this->session->has('auth')) {
+		if (empty($this->session->getUser())) {
 			$this->flash->error('Not logged in!');
 			return $this->redirect($this->url->get(['for' => 'site top']));
 		}
@@ -32,7 +32,7 @@ class UserController extends \Phalcon\Mvc\Controller
 
 	public function registerAction()
 	{
-		if ($this->session->has('auth')) {
+		if (!empty($this->session->getUser())) {
 			$this->flash->error('Already logged in!');
 			return $this->redirect($this->url->get(['for' => 'site top']));
 		}
@@ -46,7 +46,7 @@ class UserController extends \Phalcon\Mvc\Controller
 			$user->password = $this->security->hash($password);
 			$user->save();
 
-			$this->session->set('auth', ['id' => $user->id, 'name' => $user->name]);
+			$this->session->login($user);
 
 			$this->flash->success('Welcome ' . $user->name);
 			return $this->redirect($this->url->get(['for' => 'user home']));
@@ -55,7 +55,7 @@ class UserController extends \Phalcon\Mvc\Controller
 
 	public function loginAction()
 	{
-		if ($this->session->has('auth')) {
+		if (!empty($this->session->getUser())) {
 			$this->flash->error('Already logged in!');
 			return $this->redirect($this->url->get(['for' => 'site top']));
 		}
@@ -67,8 +67,7 @@ class UserController extends \Phalcon\Mvc\Controller
 			$user = User::findFirst([['email' => $email]]);
 
 			if (!empty($user) && $this->security->checkHash($password, $user->password)) {
-				//TODO: group the Session functions somewhere
-				$this->session->set('auth', ['id' => $user->id, 'name' => $user->name]);
+				$this->session->login($user);
 
 				$this->flash->success('Welcome back ' . $user->name);
 				$this->redirect($this->url->get(['for' => 'user home']));
@@ -82,7 +81,7 @@ class UserController extends \Phalcon\Mvc\Controller
 
 	public function logoutAction()
 	{
-		$this->session->destroy();
+		$this->session->logout();
 		// then show "logged out" message.
 	}
 
@@ -92,7 +91,7 @@ class UserController extends \Phalcon\Mvc\Controller
 			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'show-profile']);
 		}
 
-		if ($this->session->has('auth')) {
+		if (!empty($this->session->getUser())) {
 			return $this->dispatcher->forward(['controller' => 'user', 'action' => 'edit-profile']);
 		}
 

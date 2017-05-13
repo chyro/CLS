@@ -18,9 +18,9 @@ Tested with:
 
 TODO:
 - DB init script (single admin user?)
-- user registration, auth
 - Create a webapp that works offline on mobile
 - user admin dashboard (modules?)
 - move the services out of index.php and into app/config/services.php or app/bootstrap.php
+- Phalcore classes for base controller (init function, ACL maybe)? base user (session, ACL)?
 - hostname, HTTPS on the server?
 

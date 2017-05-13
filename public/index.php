@@ -33,7 +33,10 @@ try {
 	$config['di'] = new \Phalcon\DI\FactoryDefault();
 
 	$config['di']->set('session', function() {
-		$session = new \Phalcon\Session\Adapter\Files(['uniqueId' => 'cls']); //TODO: allow adding a unique ID in the config file, in case separate instances of this app are installed on the same server
+		$session = new \Phalcore\Session(
+			//TODO: allow adding a unique ID in the config file, in case separate instances of this app are installed on the same server
+			new \Phalcon\Session\Adapter\Files(['uniqueId' => 'cls'])
+		);
 		$session->start();
 		return $session;
 	});

@@ -7,7 +7,7 @@ $router = new \Phalcon\Mvc\Router();
 
 $router->add('/',
 		['controller' => 'index', 'action' => 'index'])
-		->setname('site top');
+		->setname('top');
 
 $router->add('/watchlist/all',
 		['controller' => 'watchlist', 'action' => 'watchlist'])
