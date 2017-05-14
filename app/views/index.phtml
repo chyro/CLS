@@ -23,6 +23,13 @@ $user = $this->session->getUser();
 			</ul>
 		</div>
 
+		<div>
+			Flash
+			<?php $this->flash->output(); ?>
+			<?php //$messages = $this->flash->getMessages(); ?>
+			<?php //$this->flash->clear(); ?>
+		</div>
+
 		<h1>Layout: before</h1>
 
 		<?php echo $this->getContent() ?>

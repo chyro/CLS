@@ -33,6 +33,7 @@ class Session {
 
 	public function logout()
 	{
+		$this->session->remove('auth');
 		$this->session->destroy();
 	}
 
@@ -56,6 +57,10 @@ class Session {
 	public function destroy()
 	{
 		return $this->session->destroy();
+	}
+	public function remove(string $key)
+	{
+		return $this->session->remove($key);
 	}
 }
 

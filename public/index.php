@@ -56,7 +56,7 @@ try {
 
 	//Setup the flash service
 	$config['di']->set('flash', function () {
-	    return new \Phalcon\Flash\Direct();
+	    return new \Phalcon\Flash\Session();
 	});
 
 	//Route Settings
