@@ -1,17 +1,17 @@
 <h1>
-	Add to Watchlist
-	<a href='<?php echo $this->url->get(['for' => 'watchlist all']);?>'>*</a>
+    Add to Watchlist
+    <a href='<?php echo $this->url->get(['for' => 'watchlist all']);?>'>*</a>
 </h1>
 
 <?php echo $this->getContent(); // Flash messages ?>
 
 <p>add form</p>
 <form method="post">
-	<div><label>Title</label> <input name="title" /></div>
-<p>Field: Movie: On /*focus*/ change, if > 3 letters, Ajax (no more than 1 request at a time) any matching movie, display on the side. Clicking the movie enters the IMDB ID in the field.</p>
-	<div><label>IMDB ID</label> <input name="imdb" /></div>
-	<div><label>rating</label> <input name="rating star-selector" /></div>
-	<p>Helper: This regers how eager you are to watch the movie, and will be used to make recommendations.</p>
-	<p>TODO: star selector.</p>
-	<input type="submit" />
+    <div><label>Title</label> <input name="title" /></div>
+<p>Field: Movie: On /*focus*/ change, if &gt; 3 letters, Ajax (no more than 1 request at a time) any matching movie, display on the side. Clicking the movie enters the IMDB ID in the field.</p>
+    <div><label>IMDB ID</label> <input name="imdb" /></div>
+    <div><label>rating</label> <input name="rating star-selector" /></div>
+    <p>Helper: This regers how eager you are to watch the movie, and will be used to make recommendations.</p>
+    <p>TODO: star selector.</p>
+    <input type="submit" />
 </form>

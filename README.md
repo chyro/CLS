@@ -23,4 +23,13 @@ TODO:
 - move the services out of index.php and into app/config/services.php or app/bootstrap.php
 - Phalcore classes for base controller (init function, ACL maybe)? base user (session, ACL)?
 - hostname, HTTPS on the server?
+- auto-post watched movies to Google Cal
+- browser add-on (or monkey grease script) to add movie from IMDB website
+- feeds quick-add button:
+- - recent / upcoming
+- - movies in "want to watch" list of friends
+- - movies highly ranked by friends
+- auto-select movies not liked or already seen by friends, for solo viewing
+- from a list of friends, auto-select movies everyone wants to see
+- from a movie, auto-select friends who want to see it as well
 

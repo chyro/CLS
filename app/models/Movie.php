@@ -2,7 +2,7 @@
 namespace Watchlist\Models;
 
 class Movie extends \Phalcore\Models\Mongo {
-	public function getSource() { return "movies"; }
+    public function getSource() { return "movies"; }
 
 //Structure:
 //title
