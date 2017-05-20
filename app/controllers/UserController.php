@@ -44,6 +44,7 @@ class UserController extends \Phalcon\Mvc\Controller
             $user->email = $this->request->getPost('email');
             $user->name = $this->request->getPost('name');
             $user->password = $this->security->hash($password);
+            $user->apiKey = bin2hex(random_bytes(20));
             $user->save();
 
             $this->session->login($user);
@@ -111,13 +112,12 @@ class UserController extends \Phalcon\Mvc\Controller
         if ($this->request->isPost()) {
             //TODO: validate fields
             $changed = 0;
-            if ($newName = $this->request->getPost('name')) {
-                $user->name = $newName;
-                $changed++;
-            }
-            if ($newEmail = $this->request->getPost('email')) {
-                $user->email = $newEmail;
-                $changed++;
+            $changeables = ['name', 'email', 'apiKey'];
+            foreach ($changeables as $fieldName) {
+                if ($newVal = $this->request->getPost($fieldName)) {
+                    $user->{$fieldName} = $newVal;
+                    $changed++;
+                }
             }
             if ($newpass = $this->request->getPost('new-password')
                 && $againpass = $this->request->getPost('again-password')

@@ -3,6 +3,7 @@ Lifestyle
 
 Naive attempt at household management, with movie watchlists,
 shopping lists, holiday planning, etc.
+Scheduling? E.g. reminders for stuff that expire, like renewing ID papers?
 
 needs:
 - Phalcon

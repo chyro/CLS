@@ -8,6 +8,5 @@ class Movie extends \Phalcore\Models\Mongo {
 //title
 //imdb ID
 //imdb rating
-//imdb url
 }
 

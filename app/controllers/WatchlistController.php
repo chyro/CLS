@@ -18,6 +18,10 @@ use Watchlist\Models\User;
  * - features
  * - design
  * - all the stuff
+ * ... ... ...
+ * - "my movies" view, similar to GoodRead's "my bookshelf" view, listing watched + to watch
+ * - "my feed" view, listing "recommended to me" and friends activity
+ * - addMovie action... we need to add stuff to the movie collection at some stage obviously
  */
 class WatchlistController extends \Phalcon\Mvc\Controller
 {
@@ -68,13 +72,14 @@ class WatchlistController extends \Phalcon\Mvc\Controller
     /**
      * Watchlist add
      *
-     * Add a movie to the watchlist
+     * Add a movie (from the "movie" collection)  to the user's watchlist
      * TODO: add some JS to help insert the movie,
      * looking up in the local DB and other sources
      * (imdb?) for matches on the title
      * http://stackoverflow.com/a/7744369
      * http://sg.media-imdb.com/suggests/$titleFirstLetter/$title.json
      * http://www.omdbapi.com/?t=$title&y=&plot=short&r=json
+     * https://www.themoviedb.org/faq/api
      */
     public function addAction()
     {
@@ -109,6 +114,7 @@ class WatchlistController extends \Phalcon\Mvc\Controller
             $user->watchlist = $watchlist;
             //Warning: I don't know the details of Phalcon Mongo libraries,
             //but this seriously looks non-atomic. Can't I just $push?
+            //Of course you can push, moron! Redo this thing!
 
             $success = $user->save();
             if ($success) {

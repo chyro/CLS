@@ -1,24 +1,28 @@
 <?php
 Phalcon\Tag::setDefault('name', $user->name);
 Phalcon\Tag::setDefault('email', $user->email);
+Phalcon\Tag::setDefault('apiKey', $user->apiKey);
 ?>
 Profile Info
 
-<?php echo Phalcon\Tag::form(array('', 'method' => 'post')); ?>
+<?php echo Phalcon\Tag::form(['', 'method' => 'post']); ?>
 
     <label for="name">Name</label>
-    <?php echo Phalcon\Tag::textField(array('name')); ?>
+    <?php echo Phalcon\Tag::textField(['name']); ?>
 
     <label for="email">Email</label>
-    <?php echo Phalcon\Tag::textField(array('email')); ?>
+    <?php echo Phalcon\Tag::textField(['email']); ?>
+
+    <label for="apiKey">API Key</label>
+    <p><?php echo Phalcon\Tag::textField(['apiKey', 'readonly' => 'readonly']); ?><button onclick="document.getElementsByName('apiKey')[0].value=Math.random().toString(36).substring(2,22)+Math.random().toString(36).substring(2,22);return false;">Regenerate</button></p>
 
     <p>Change Password:</p>
     <label for="current-password">Current:</label>
-    <?php echo Phalcon\Tag::passwordField(array('current-password')); ?>
+    <?php echo Phalcon\Tag::passwordField(['current-password']); ?>
     <label for="new-password">New:</label>
-    <?php echo Phalcon\Tag::passwordField(array('new-password')); ?>
+    <?php echo Phalcon\Tag::passwordField(['new-password']); ?>
     <label for="again-password">New again:</label>
-    <?php echo Phalcon\Tag::passwordField(array('again-password')); ?>
+    <?php echo Phalcon\Tag::passwordField(['again-password']); ?>
 
     <?php echo Phalcon\Tag::submitButton('Save'); ?>
 

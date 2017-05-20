@@ -25,7 +25,8 @@ try {
         'Watchlist\Views' => BASE_DIR . '/' . $config->application->viewsDir,
         'Watchlist\Models' => BASE_DIR . '/' . $config->application->modelsDir,
         'Watchlist' => BASE_DIR . '/' . $config->application->appLibDir,
-        'Phalcore' => BASE_DIR . '/' . $config->application->librariesDir . 'phalcore/',
+        'Phalcore' => BASE_DIR . '/' . $config->application->librariesDir . 'Phalcore/',
+        'Movies' => BASE_DIR . '/' . $config->application->librariesDir . 'Movies/',
         'Phalcon' => BASE_DIR . '/' . $config->application->vendorsDir . 'incubator/Library/Phalcon/',
         ] )->register();
 
