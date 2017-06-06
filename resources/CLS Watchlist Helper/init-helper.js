@@ -35,11 +35,11 @@ var initHelper = {
     document.body.insertBefore(pairButton, initHelper.profileForm);
 
     pairButton.addEventListener("click", initHelper.pairProfile);
-    // Should I add an un-pair button? and / or in the popup?
+    // Should I add an un-pair button here as well? Probably redundant.
   },
 
   pairProfile: function() {
-    chrome.storage.sync.set(initHelper.detectedProfile, function(){alert('Done.')});
+    chrome.storage.sync.set(initHelper.detectedProfile, function() { alert('Done.'); });
   }
 }
 

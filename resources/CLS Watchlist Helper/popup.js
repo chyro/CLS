@@ -1,17 +1,22 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   // Checking current credentials, adjusting the display
-  chrome.storage.sync.get({ name :'', email: '', apiKey: '' }, function(credentials){
-    if (credentials.name != '') helpers.setFieldValue('name', credentials.name);
-    if (credentials.email != '') helpers.setFieldValue('email', credentials.email);
-    if (credentials.apiKey != '') helpers.setFieldValue('apiKey', credentials.apiKey);
-    if (credentials.name != '' || credentials.email != '' || credentials.apiKey != '') document.getElementById('account-info').classList.add('initialized');
+  chrome.storage.sync.get({ name :'', email: '', apiKey: '' }, function(credentials) {
+    if (credentials.name != '' || credentials.email != '' || credentials.apiKey != '') {
+      helpers.setFieldValue('name', credentials.name);
+      helpers.setFieldValue('email', credentials.email);
+      helpers.setFieldValue('apiKey', credentials.apiKey);
+      document.getElementById('account-info').classList.add('initialized');
+    }
   });
 
   // Set the unpair button handler
   var unpairButton = document.querySelector('button.control.unpair');
   unpairButton.addEventListener('click', function(){
-    chrome.storage.sync.set({ name: '', email: '', apiKey: '' }, function(){alert('Done.');window.location.href=window.location.href;});
+    chrome.storage.sync.set({ name: '', email: '', apiKey: '' }, function() {
+      alert('Done.');
+      window.location.href = window.location.href;
+    });
   });
 
   /*
@@ -28,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // TODO: add a click handler to button.pair, storing the user info and key from the current page
-  //     chrome.storage.sync.set({ name: name, email: email, apiKey: apiKey });
+  // chrome.storage.sync.set({ name: name, email: email, apiKey: apiKey });
   */
 });
 
