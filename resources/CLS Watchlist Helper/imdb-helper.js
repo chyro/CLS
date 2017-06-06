@@ -1,13 +1,5 @@
-function getMetaContent(attribute, value) {
-  var allMetas = document.getElementsByTagName('meta');
-  for (var i = 0; i < allMetas.length; i++) {
-    if (allMetas[i].getAttribute(attribute) == value) {
-      return allMetas[i].getAttribute('content');
-    }
-  }
-}
 
-var movieID = getMetaContent('property', 'pageId');
+var movieID = helpers.getMetaContent('property', 'pageId');
 if (movieID) console.log('detected movie ID ' + movieID);
 
 // Adding the button

@@ -6,23 +6,35 @@
       body {
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
         font-size: 100%;
+        width: 300px;
       }
-      #status {
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
-      }
+
+      #account-info .not-initialized { display: block; }
+      #account-info .info { display: none; }
+      #account-info.initialized .not-initialized { display: none; }
+      #account-info.initialized .info { display: block; }
+
+      #account-init { display: none; }
+      #account-init.active { display: block; }
     </style>
 
-    <!-- script src="popup.js"></script -->
+    <script src="helpers.js"></script>
+    <script src="popup.js"></script>
   </head>
-  <body style="width:300px;">
-    <!-- div id="status"></div>
-    <img id="image-result" hidden -->
+  <body>
+    <div id="profile">
+      <h3>Linked Account:</h3>
+      <div id="account-info">
+        <div class="not-initialized">Credentials not initialized. To initialize, navigate to your profile page and click the pairing button.</div>
+        <div class="info">
+          <p>Paired with account: [<span class="field name"></span>]</p>
+          <button type="button" class="control unpair">Unpair</button>
+        <div>
+      </div>
+      <!-- div id="account-init"><button type="button" class="control pair">Pair this account: <span class="field accountLabel"></span></button></div -->
+    </div>
     <h3>Credits?</h3>
     <p>Some other useful stuff?</p>
-    <p>Don't really need this button actually. Or as a fallback?</p>
   </body>
 </html>
 

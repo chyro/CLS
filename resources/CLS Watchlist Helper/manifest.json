@@ -8,7 +8,7 @@
   "icons": { "128" : "icon-128.png" },
 
   "browser_action": {
-    "default_icon": "icon.png",
+    "default_icon": "icon-20.png",
     "default_popup": "popup.html"
   },
 
@@ -16,7 +16,12 @@
     {
       "matches": ["http://www.imdb.com/title/*"],
       "css": ["imdb-helper.css"],
-      "js": ["imdb-helper.js"]
+      "js": ["helpers.js", "imdb-helper.js"]
+    },
+    {
+      "matches": ["http://202.171.212.225/~guilhem/cls/user/profile"],
+      "css": ["init-helper.css"],
+      "js": ["helpers.js", "init-helper.js"]
     }
   ],
 
@@ -26,6 +31,7 @@
 
   "permissions": [
     "activeTab",
+    "storage",
     "https://ajax.googleapis.com/"
   ]
 }

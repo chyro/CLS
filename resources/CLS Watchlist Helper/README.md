@@ -6,5 +6,4 @@ exist at this stage sadly... work in progress.
 
 TODO: on hover, dropdown some more icons to add to watched
 TODO: on page load, query whether the film is already on the watch- or watched list
-TODO: store the user login / apikey (autoload when visiting CLS profile page?)
 
