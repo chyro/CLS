@@ -1,4 +1,35 @@
-.cls.trigger img {
-  max-width: 30px;
-  max-height: 30px;
+.cls.multibutton {
+  width: 40px;
+  height: 30px;
+  display: inline-block;
+  position: relative;
 }
+.cls.multibutton > .container {
+  padding: 0;
+  width: 30px;
+  max-height: 30px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  transition: max-height .3s ease-out, background-color 0s step-end .3s, padding 0s step-end .3s, box-shadow 0s step-end .3s, border-radius 0s step-end .3s, top 0s step-end .3s, left 0s step-end .3s;
+}
+.cls.multibutton > .container:hover {
+  max-height: 300px; /* can't transition to height:auto... hopefully never need more? */
+  transition: max-height .3s ease-in, background-color 0s step-end 0s, padding 0s step-end 0s, box-shadow 0s step-end 0s, border-radius 0s step-end 0s, top 0s step-end 0s, left 0s step-end 0s;
+  /* Some cosmetics: (looks odd when there's just one button, should maybe isolate?) */
+  background: white;
+  padding: 5px;
+  top: -5px;
+  left: -5px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px #333, 0 0 0 3px #ddd, 0 0 0 4px #999, 0 0 0 5px #555, 0 0 0 6px #333;
+}
+.cls.multibutton img {
+  width: 100%;
+}
+.cls.multibutton img.trigger {
+  cursor: pointer;
+}
+

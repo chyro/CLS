@@ -58,6 +58,9 @@ $router->add('/user/profile',
 $router->add('/api/imdb-add',
     ['controller' => 'api', 'action' => 'imdbAdd'])
     ->setname('api imdb add');
+$router->add('/api/movie-status',
+    ['controller' => 'api', 'action' => 'movieStatus'])
+    ->setname('api movie status');
 
 $config['di']->set('router', $router);
 

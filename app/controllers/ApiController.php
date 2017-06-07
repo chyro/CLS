@@ -15,6 +15,24 @@ use Movies\OMDb as MovieApi;
  */
 class ApiController extends \Phalcon\Mvc\Controller
 {
+    public function initialize()
+    {
+        // all API responses will be JSON
+        $this->view->disable();
+
+        // all API functions will require authentification
+        $userEmail = $this->request->get('email');
+        $user = User::findFirst([['email' => $userEmail]]);
+        $userApiKey = $this->request->get('apiKey');
+        if (empty($user) || $user->apiKey != $userApiKey) {
+            echo '{"result": "error", "message": "wrong credentials"}';
+            // API error management should be unified somehow
+            die();
+        }
+
+        $this->user = $user;
+    }
+
 /*
 <form action="http://202.171.212.225/~guilhem/cls/api/imdb-add" method="post">
   <input name="email" value="1234">
@@ -24,23 +42,21 @@ class ApiController extends \Phalcon\Mvc\Controller
   <input type="submit">
 </form>
 */
+    /**
+     * Add a movie to the watchlist (or watched list)
+     *
+     * Intended to use from the IMDb website directly, "add this to watchlist".
+     */
     public function imdbAddAction()
     {
-        //This should be in an init() common for the whole API!!!
-        $userEmail = $this->request->get('email');
-        $user = User::findFirst([['email' => $userEmail]]);
-        $userApiKey = $this->request->get('apiKey');
-        if (empty($user) || $user->apiKey != $userApiKey) {
-            echo '{"result": "error", "message": "wrong credentials"}'; // this too should be common somehow
-            die();
-        }
+        $user = $this->user;
 
-        // the actual Add function:
-        // TODO: this is a routine task, might be done e.g. from web interface, should be in User::something instead
         $imdbID = $this->request->getPost('imdbid');
-        $movie = Movie::find([['IMDbID' => $imdbID]]);
+        $watchRating = $this->request->getPost('rating', null, 3);
+
+        $movie = Movie::findFirst([['IMDbID' => $imdbID]]); // TODO: this is a routine task, should be in Movie:getOrCreate($imdbid) instead
         if (empty($movie)) {
-            $movieInfo = MovieApi::getByID($imdbID);
+            $movieInfo = MovieApi::getByID($imdbID); // TODO: failover in case the API is not helping
             $movie = new Movie();
             $movie->IMDbID = $movieInfo->imdbID;
             $movie->title = $movieInfo->Title;
@@ -54,15 +70,33 @@ class ApiController extends \Phalcon\Mvc\Controller
             $movie->save();
         }
         $targetList = $this->request->getPost('list', null, 'watchlist');
-        array_push($user->{$targetList}, $movie);
+        if (!in_array($targetList, ['watchlist', 'watched'])) $targetList = 'watchlist';
+
+        // TODO: this is a routine task, might be done e.g. from web interface, should be in User::something instead
+        // TODO: if ($targetList == 'watched' && in_array($movie, $user->watchlist)) remove from watchlist
+        // TODO: if the user has a Google Cal set up, and the list is 'watched', add an event on the Cal
+        $list = $user->{$targetList};
+        array_push($list, ['movie' => $movie, 'rating' => $watchRating]);
+        $user->{$targetList} = $list;
         $user->save();
 
         echo '{"result": "OK"}';
     }
 
-    //Watchlist -> Watched
-    // google Cal
+    /**
+     * Get the status of a movie, if it is currently in a list
+     */
+    public function movieStatusAction()
+    {
+        $user = $this->user;
 
-    //automatically-generated quizz of movies/actors/directors from IMDB
+        $imdbID = $this->request->getPost('imdbid');
+
+        $status = $user->getMovieStatus($imdbID);
+
+        echo json_encode($status);
+    }
+
+    //automatically-generated quizz of movies/actors/directors from IMDb
 }
 

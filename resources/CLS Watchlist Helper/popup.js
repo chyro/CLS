@@ -1,21 +1,21 @@
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('watchlist.initialized', function() {
   // Checking current credentials, adjusting the display
-  chrome.storage.sync.get({ name :'', email: '', apiKey: '' }, function(credentials) {
-    if (credentials.name != '' || credentials.email != '' || credentials.apiKey != '') {
-      helpers.setFieldValue('name', credentials.name);
-      helpers.setFieldValue('email', credentials.email);
-      helpers.setFieldValue('apiKey', credentials.apiKey);
-      document.getElementById('account-info').classList.add('initialized');
-    }
-  });
+  if (credentials.current.name != ''
+      || credentials.current.email != ''
+      || credentials.current.apiKey != '') {
+    helpers.setFieldValue('name', credentials.current.name);
+    helpers.setFieldValue('email', credentials.current.email);
+    helpers.setFieldValue('apiKey', credentials.current.apiKey);
+    document.getElementById('account-info').classList.add('initialized');
+  }
 
   // Set the unpair button handler
   var unpairButton = document.querySelector('button.control.unpair');
   unpairButton.addEventListener('click', function(){
-    chrome.storage.sync.set({ name: '', email: '', apiKey: '' }, function() {
+    credentials.unset(function() {
       alert('Done.');
-      window.location.href = window.location.href;
+      window.location.href = window.location.href; // reloading to reflect the new status
     });
   });
 

@@ -26,7 +26,10 @@
   ],
 
   "web_accessible_resources": [
-    "btn-add-to-watchlist.png"
+    "icon-in-watchlist.png",
+    "icon-in-watched.png",
+    "btn-add-to-watchlist.png",
+    "btn-add-to-watched.png"
   ],
 
   "permissions": [

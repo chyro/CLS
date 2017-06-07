@@ -39,10 +39,13 @@ var initHelper = {
   },
 
   pairProfile: function() {
-    chrome.storage.sync.set(initHelper.detectedProfile, function() { alert('Done.'); });
+    credentials.set(initHelper.detectedProfile.name, initHelper.detectedProfile.email, initHelper.detectedProfile.apiKey, function() { alert('Done.'); });
   }
-}
+};
 
 console.log("So we're on a profile page apparently...");
+//document.addEventListener('watchlist.initialized', function() { // not currently using any watchlist stuff yet, so not needed, maybe later
+//document.addEventListener('DOMContentLoaded', function() { // already fired when plugin files are loaded (by default)
+//window.addEventListener('load', function() { // not waiting for any of the page's resources
 initHelper.init();
 
