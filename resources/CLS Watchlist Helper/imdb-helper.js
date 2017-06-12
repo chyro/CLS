@@ -1,3 +1,8 @@
+/**
+ * This code is added to IMDb movie pages. It detects the movie IMDb ID, and uses the
+ * API to display whether the movie is in the user's lists, and buttons to add it.
+ */
+
 var imdbHelper = {
   movieID: null,
   movieStatus: null,
@@ -56,6 +61,7 @@ var imdbHelper = {
       } // else { display some error sign? }
 
     //TODO: ANY OF THOSE API CALLS SHOULD RELOAD THE PAGE, OR AT LEAST REFRESH THE SECTION
+    console.log('CLS IMDb Helper initialization complete.');
   },
 
   init: function() {
@@ -67,7 +73,8 @@ var imdbHelper = {
   }
 };
 
-document.addEventListener('watchlist.initialized', function() {
+console.log("So we're on an IMDb movie page apparently...");
+CLS.initialized.then(res => {
+  console.log('Initializing CLS IMDb Helper');
   imdbHelper.init();
 });
-

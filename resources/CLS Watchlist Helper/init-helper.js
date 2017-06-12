@@ -1,3 +1,9 @@
+/**
+ * This code is added to the CLS profile page. It automatically detects the credentials
+ * on the page, and adds a button offering to store them in the plugin, to use for API
+ * calls.
+ */
+
 var initHelper = {
   detectedProfile: {name: '', email: '', apiKey: ''},
   profileForm: null,
@@ -8,7 +14,7 @@ var initHelper = {
     if (initHelper.detectedProfile.name != ''
         && initHelper.detectedProfile.email != ''
         && initHelper.detectedProfile.apiKey != '') {
-      console.log("Detected user account " + initHelper.detectedProfile.name + ", email " + initHelper.detectedProfile.email + ", key " + initHelper.detectedProfile.apiKey);
+      console.log("Detected user account " + initHelper.detectedProfile.name + ", email " + initHelper.detectedProfile.email + ", key " + initHelper.detectedProfile.apiKey, 1);
       initHelper.addPairButton();
     }
   },
@@ -39,13 +45,18 @@ var initHelper = {
   },
 
   pairProfile: function() {
-    credentials.set(initHelper.detectedProfile.name, initHelper.detectedProfile.email, initHelper.detectedProfile.apiKey, function() { alert('Done.'); });
+    CLS.credentials.set(initHelper.detectedProfile.name, initHelper.detectedProfile.email, initHelper.detectedProfile.apiKey, function() { alert('Done.'); });
   }
 };
 
 console.log("So we're on a profile page apparently...");
-//document.addEventListener('watchlist.initialized', function() { // not currently using any watchlist stuff yet, so not needed, maybe later
+
+//https://stackoverflow.com/a/43245774
 //document.addEventListener('DOMContentLoaded', function() { // already fired when plugin files are loaded (by default)
 //window.addEventListener('load', function() { // not waiting for any of the page's resources
-initHelper.init();
-
+//CLS.initialized.then(function() { // not currently using any watchlist stuff yet, so not needed, maybe later
+CLS.loaded.then(res => { // not using any watchlist stuff yet, but it would  be a shame if we store data before they are loaded.
+  console.log('Initializing CLS Profile Initialization Helper');
+  initHelper.init();
+  console.log('CLS Profile Initialization Helper initialization complete.');
+});

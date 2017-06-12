@@ -1,3 +1,11 @@
+/**
+ * This file contains utility code for use in the various other files.
+ *
+ * In particular, it initializes the credentials, which are used throughout the plugin. In
+ * order to ensure the plugin is initialized before running the page code, every page code
+ * should use to the 'CLS.loaded' promise as a base before running anything.
+ */
+
 var helpers = {
   // querries the Chrome API for the tab URL
   getCurrentTabUrl: function(callback) {
@@ -9,10 +17,15 @@ var helpers = {
   },
 
   // helper to assign value to field spans
+  // example use: <a class="field articleUrl"><span class="field articleTitle"></span></a>
   setFieldValue: function(field, value) {
-    spans = document.querySelectorAll('.field.' + field);
+    spans = document.querySelectorAll('span.field.' + field);
     for (var i = 0; i < spans.length; i++) {
       spans[i].textContent = value;
+    }
+    links = document.querySelectorAll('a.field.' + field);
+    for (var i = 0; i < links.length; i++) {
+      links[i].href = value;
     }
   },
 
@@ -42,6 +55,15 @@ var helpers = {
     return newObj;
   },
 
+  // always resolve the promise, whether it succeeded or not.
+  optionalPromise: function (promise) {
+    return promise.then(
+      function(v){ return {v:v, status: "resolved" }},
+      function(e){ return {e:e, status: "rejected" }}
+    );
+  },
+
+  // convert an associative array into a URL query (e.g. {a:1,b:2} => a=1&b=2)
   getQueryString: function(obj) {
     var str = [];
     for(var p in obj)
@@ -52,9 +74,10 @@ var helpers = {
   },
 
   // helper to query the CLS API
+  // This could return a Promise maybe?
   apiQuery: function(apiFunction, parameters, callback) {
     if (!parameters) parameters = {};
-    authParams = {email: credentials.current.email, apiKey: credentials.current.apiKey};
+    authParams = {email: CLS.credentials.current.email, apiKey: CLS.credentials.current.apiKey};
     queryParams = helpers.arrayMerge(authParams, parameters);
     queryUrl = settings.apiUrl + apiFunction;
 
@@ -68,37 +91,15 @@ var helpers = {
     request.send(helpers.getQueryString(queryParams));
   },
 
-  // helper to output debug info - particularly useful for plugin popups, where console.log is not usable
-  log: function(comment) {
-    // if there is no "#status" div in the document, add one:
-    if (!document.getElementById('status')) {
-      var statusDiv = document.createElement('div');
-      statusDiv.setAttribute('id', 'status');
-      document.body.insertBefore(statusDiv, document.body.firstChild);
-    }
-    document.getElementById('status').innerHTML += comment + "<br/>";
-  }
-};
+  // helper to output debug info - particularly useful for plugin popups, where console.log is harder to access
+  log: function(comment, level) {
+    if (level < settings.loglevel) return;
 
-var credentials = {
-  current: null,
-  init: function() {
-    chrome.storage.sync.get({ name :'', email: '', apiKey: '' }, function(storedCreds) {
-      credentials.current = storedCreds;
-      document.dispatchEvent(new Event('watchlist.initialized'));
-    });
-  },
-  set: function(name, email, apiKey, callback) {
-    chrome.storage.sync.set({name: name, email: email, apiKey: apiKey}, callback);
-  },
-  unset: function(callback) {
-    chrome.storage.sync.set({name: '', email: '', apiKey: ''}, callback);
-  },
-  get: function(callback) {
-    if (current) {
-      callback(current);
-    } else {
-      chrome.storage.sync.get({ name :'', email: '', apiKey: '' }, callback);
+    console.log(comment);
+
+    // displaying the message on the page if the page expects it
+    if (document.getElementById('status')) {
+      document.getElementById('status').innerHTML += comment + "<br/>";
     }
   }
 };
@@ -106,14 +107,71 @@ var credentials = {
 // should be in settings.js?
 var settings = {
   apiUrl: 'http://202.171.212.225/~guilhem/cls/api/',
-  profileUrl: 'http://202.171.212.225/~guilhem/cls/user/profile'
+  profileUrl: 'http://202.171.212.225/~guilhem/cls/user/profile', // Could we have that be a user setting, in case others install their own server?
+  loglevel: 0 // 0: verbose, 1: notice, 2: critical
 };
 
-//https://stackoverflow.com/a/43245774
-//DOMContentLoaded is already gone, running the init right away might fire watchlist.initialized before the other plugin files are loaded => waiting for window.load
-window.addEventListener('load', function() {
-  credentials.init();
-  //TODO: inits = { credentials: false, etc }; credentials.init(callback); callback = { set inits.credentials = true; if all inits are true, throw event watchlist.initialized; }; all page scripts will init based on that event. This mechanism will be useful when more than one thing needs to be initialized.
-  //TODO: if there are no credentials available, do NOT add icons on IMDb (don't even dispatch the "initialized" event maybe?)
-});
+var CLS = {
+  initialized: null, // useful for pages that should not run unless everything is configured
+  loaded: null, // useful for configuration pages, that should run regardless
 
+  credentials: {
+    loaded: null,
+    current: null,
+    init: function() {
+      helpers.log('Initializing CLS credentials');
+
+      CLS.credentials.loaded = new Promise((resolve, reject) => {
+        chrome.storage.sync.get({ name : '', email: '', apiKey: ''}, function(storedCreds) {
+          CLS.credentials.current = storedCreds;
+          if (!storedCreds.name || !storedCreds.email || !storedCreds.apiKey) {
+            reject('Credentials not initialized.');
+          } else {
+            resolve(storedCreds);
+          }
+        });
+      });
+
+      CLS.credentials.loaded.then(res => { helpers.log('CLS credentials initialization complete.'); });
+    },
+    set: function(name, email, apiKey, callback) {
+      chrome.storage.sync.set({name: name, email: email, apiKey: apiKey}, callback);
+    },
+    unset: function(callback) {
+      chrome.storage.sync.set({name: '', email: '', apiKey: ''}, callback);
+    }
+  },
+
+  // Nothing else for now, but if ever any it would look like this:
+  otherStuff: {
+    loaded: null,
+    init: function() {
+      CLS.otherStuff.loaded = new Promise((resolve, reject) => { setTimeout(function(){ resolve(true); }, 500); });
+    }
+  },
+
+  DOMLoaded: new Promise((resolve, reject) => { if (document.readyState == 'complete') resolve(true); else window.addEventListener('load', function() { resolve(true); })}),
+
+  init: function() {
+    helpers.log('Initializing CLS');
+    CLS.credentials.init();
+    CLS.otherStuff.init();
+
+    // Pages can run directly if they don't need anything, or run based on components e.g. CLS.credential.loaded.then(),
+    // or to be really conservative wait for full load e.g. CLS.loaded.then(). Pages that required the plugin to be
+    // initialized should wait for CLS.initialized.
+    var required = [CLS.otherStuff.loaded, CLS.DOMLoaded];
+    var optional = [CLS.credentials.loaded];
+
+    CLS.loaded = Promise.all(required.concat(optional.map(helpers.optionalPromise)));
+    CLS.initialized = Promise.all(required.concat(optional));
+
+    CLS.loaded.then(res => { helpers.log('CLS initialization complete.'); });
+    CLS.initialized.then(res => { helpers.log('CLS fully configured.'); });
+  }
+}
+
+//DOMContentLoaded is already gone, running the init right away might trigger the other plugin files before the DOM is ready => waiting for window.load
+//window.addEventListener('load', function() {
+  CLS.init();
+//});
