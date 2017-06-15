@@ -19,6 +19,8 @@ $router->add('/watchlist/delete/{movie_id}',
     ['controller' => 'watchlist', 'action' => 'delete'])
     ->setname('watchlist delete');
 
+//TODO: delete all those routes, just use GET params on the watchlist route
+// more useful routes will be things like '/cal' i.e. use-case driven rather than data-driven
 $router->add('/watchlist/watched/',
     ['controller' => 'watchlist', 'action' => 'watched'])
     ->setname('watched all');

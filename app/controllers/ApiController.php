@@ -52,32 +52,20 @@ class ApiController extends \Phalcon\Mvc\Controller
         $user = $this->user;
 
         $imdbID = $this->request->getPost('imdbid');
-        $watchRating = $this->request->getPost('rating', null, 3);
-
-        $movie = Movie::findFirst([['IMDbID' => $imdbID]]); // TODO: this is a routine task, should be in Movie:getOrCreate($imdbid) instead
-        if (empty($movie)) {
-            $movieInfo = MovieApi::getByID($imdbID); // TODO: failover in case the API is not helping
-            $movie = new Movie();
-            $movie->IMDbID = $movieInfo->imdbID;
-            $movie->title = $movieInfo->Title;
-            foreach ($movieInfo->Ratings as $rating) {
-                if ($rating->Source == 'Internet Movie Database') {
-                    $movie->ratingIMDb = reset(explode('/', $rating->Value));
-                } else if ($rating->Source == 'Rotten Tomatoes') {
-                    $movie->ratingRotten = reset(explode('%', $rating->Value));
-                }
-            }
-            $movie->save();
-        }
         $targetList = $this->request->getPost('list', null, 'watchlist');
         if (!in_array($targetList, ['watchlist', 'watched'])) $targetList = 'watchlist';
 
-        // TODO: this is a routine task, might be done e.g. from web interface, should be in User::something instead
-        // TODO: if ($targetList == 'watched' && in_array($movie, $user->watchlist)) remove from watchlist
-        // TODO: if the user has a Google Cal set up, and the list is 'watched', add an event on the Cal
-        $list = $user->{$targetList};
-        array_push($list, ['movie' => $movie, 'rating' => $watchRating]);
-        $user->{$targetList} = $list;
+        $extraOptions = [];
+        if (!empty($watchRating = $this->request->getPost('rating'))) {
+            $extraOptions['rating'] = $watchRating;
+        }
+        if (!empty($watchDate = $this->request->getPost('date'))) {
+            $extraOptions['date'] = $watchDate;
+        }
+
+        $movie = Movie::getMovie($imdbID);
+
+        $user->addToList($movie, $targetList, $extraOptions);
         $user->save();
 
         echo '{"result": "OK"}';

@@ -6,6 +6,23 @@ namespace Phalcore\Models;
  */
 abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
 
+    // __construct is final, so support for object initialization (e.g. default values for fields) is offered via the factory pattern:
+    public static function factory()
+    {
+        $class = get_called_class();
+        $object = new $class();
+        foreach (static::getDefaults() as $field => $value) {
+            $object->{$field} = $value;
+        }
+        return $object;
+    }
+
+    // This function can be overloaded to assign default values to fields when creating a new instance.
+    public static function getDefaults()
+    {
+        return [];
+    }
+
     /**
      * The save function stores the assigned fields into
      * the database. Overloaded to...

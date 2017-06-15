@@ -40,7 +40,7 @@ class UserController extends \Phalcon\Mvc\Controller
         if ($this->request->isPost()) {
             //TODO: validate fields
             $password = $this->request->getPost('password');
-            $user = new User();
+            $user = User::factory(); // TODO: should I make factory() take an array of fields as param, for the mandatory fields?
             $user->email = $this->request->getPost('email');
             $user->name = $this->request->getPost('name');
             $user->password = $this->security->hash($password);

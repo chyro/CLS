@@ -42,7 +42,7 @@ var imdbHelper = {
       if (status.status == "watchlist") {
         imdbHelper.addSubButton('icon-in-watchlist.png', 'currently in watchlist');
 //TODO maybe: add glasses in the icon to differentiate it better from the btn?
-//TODO maybe: differentiate icons vs buttons using... bg? colors? gloss?
+//TODO maybe: differentiate icons vs buttons using... bg? colors (pastels, greyscale)? gloss?
         imdbHelper.addSubButton('btn-add-to-watched.png', 'set to watched', function(){
           helpers.apiQuery('imdb-add', {imdbid: imdbHelper.movieID, list: 'watched'}, function(response){alert(response.result);});
         });

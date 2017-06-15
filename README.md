@@ -31,6 +31,9 @@ TODO:
 - - movies in "want to watch" list of friends
 - - movies highly ranked by friends
 - auto-select movies not liked or already seen by friends, for solo viewing
-- from a list of friends, auto-select movies everyone wants to see
-- from a movie, auto-select friends who want to see it as well
+- add friend features
+- - from a list of friends, auto-select movies everyone wants to see
+- - from a movie, auto-select friends who want to see it as well
+- - from no input, auto-suggest friends / movies
+- - from no input, auto-suggest potential friends
 
