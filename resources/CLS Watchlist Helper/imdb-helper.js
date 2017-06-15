@@ -48,7 +48,7 @@ var imdbHelper = {
         });
         //TODO: rating, date
       } else if (status.status == "watched") {
-        imdbHelper.addSubButton('icon-in-watched.png', 'watched (' + response.date + ')');
+        imdbHelper.addSubButton('icon-in-watched.png', 'watched (' + status.date + ')');
         // could add buttons for "recommend" or "rewatch"
       } else if (status.status == "unknown") {
         imdbHelper.addSubButton('btn-add-to-watchlist.png', 'add to watchlist', function(){
