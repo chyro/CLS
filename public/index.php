@@ -27,7 +27,8 @@ try {
         'Watchlist' => BASE_DIR . '/' . $config->application->appLibDir,
         'Phalcore' => BASE_DIR . '/' . $config->application->librariesDir . 'Phalcore/',
         'Movies' => BASE_DIR . '/' . $config->application->librariesDir . 'Movies/',
-        'Phalcon' => BASE_DIR . '/' . $config->application->vendorsDir . 'incubator/Library/Phalcon/',
+        'Phalcon' => BASE_DIR . '/' . $config->application->vendorsDir . 'phalcon/incubator/Library/Phalcon/',
+        'Leafo\ScssPhp' => BASE_DIR . '/' . $config->application->vendorsDir . 'leafo/scssphp/src/',
         ] )->register();
 
     //Create a DI
@@ -79,17 +80,29 @@ try {
         return $db;
     }, true);
 
-    $config['di']->set('collectionManager', function(){
+    $config['di']->set('collectionManager', function() {
         return new \Phalcon\Mvc\Collection\Manager();
     }, true);
 
-    $config['di']->set('url', function(){
+    $config['di']->set('url', function() {
         $url = new \Phalcon\Mvc\Url();
         $base = dirname($_SERVER["SCRIPT_NAME"]); // hoping to handle root and subfolder installs // PHP_SELF seems to work as well
         $base = rtrim($base, '/') . '/'; // making sure there is always a trailing slash
         $url->setBaseUri($base);
         return $url;
     });
+
+    $config['di']->set('head', function() use ($config) {
+        $headHelper = new \Phalcore\Helper\Head();
+        $headHelper->setCacheDir(['css' => $config->application->CSSCacheDir, 'js' => $config->application->JSCacheDir]);
+        if ($config->application->minifyScripts) {
+            $headHelper->setMinify(true);
+        }
+        if ($config->application->mergeScripts) {
+            $headHelper->setMerge(true);
+        }
+        return $headHelper;
+    }, true);
 
     //Handle the request
     $application = new \Phalcon\Mvc\Application($config['di']);

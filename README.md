@@ -25,7 +25,6 @@ TODO:
 - Phalcore classes for base controller (init function, ACL maybe)? base user (session, ACL)?
 - hostname, HTTPS on the server?
 - auto-post watched movies to Google Cal
-- browser add-on (or monkey grease script) to add movie from IMDB website
 - feeds quick-add button:
 - - recent / upcoming
 - - movies in "want to watch" list of friends
@@ -36,4 +35,18 @@ TODO:
 - - from a movie, auto-select friends who want to see it as well
 - - from no input, auto-suggest friends / movies
 - - from no input, auto-suggest potential friends
+- Plugin needs to display the lists (tabs?)
+- Plugin needs to display notifications e.g. friends requests, movie suggestions
+- Replace the movie API - obviously it's not working out
+- create an "artisan"-style bin to install / update the vendor dependencies? use composer?
+
+Folders:
+- app:       core app code (models, controllers, views, etc)
+- library:   internal libraries
+- vendor:    external libraries
+- public:    HTTP root
+- data:      location for the app to store files, e.g. cache or uploaded files
+- resources: non-web resources, e.g. plugins, documentation
+
+The data/etc folders are the only ones needing write access. TODO: add a .htaccess rule to block any script from running from any writable folder.
 

@@ -1,38 +1,43 @@
 <?php
 $user = $this->session->getUser();
 ?>
-<html>
-    <head>
-        <title>Watchlist</title>
-    </head>
-    <body>
-        <div>
-            Nav
-            <ul>
-                <li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
-                <?php if (empty($user)): ?>
-                <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
-                <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
-                <?php else: ?>
-                <li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
-                <li>as <?php echo $user->name; ?></li>
-                <li><a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a></li>
-                <li><a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a></li>
-                <?php endif; ?>
-            </ul>
-        </div>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Watchlist</title>
+<?php echo $this->head->styles()->get(); ?>
+</head>
+<body>
+<div>
+    Nav
+    <ul>
+        <li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
+        <?php if (empty($user)): ?>
+        <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
+        <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
+        <?php else: ?>
+        <li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
+        <li>as <?php echo $user->name; ?></li>
+        <li><a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a></li>
+        <li><a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a></li>
+        <?php endif; ?>
+    </ul>
+</div>
 
-        <div>
-            Flash
-            <?php $this->flash->output(); ?>
-            <?php //$messages = $this->flash->getMessages(); ?>
-            <?php //$this->flash->clear(); ?>
-        </div>
+<div>
+    Flash
+    <?php $this->flash->output(); ?>
+    <?php //$messages = $this->flash->getMessages(); ?>
+    <?php //$this->flash->clear(); ?>
+</div>
 
-        <h1>Layout: before</h1>
+<h1>Layout: before</h1>
 
-        <?php echo $this->getContent() ?>
+<?php echo $this->getContent() ?>
 
-        <h1>Layout: after</h1>
-    </body>
+<h1>Layout: after</h1>
+
+<?php echo $this->head->scripts()->get(); ?>
+</body>
 </html>
