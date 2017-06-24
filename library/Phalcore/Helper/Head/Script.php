@@ -3,6 +3,7 @@ namespace Phalcore\Helper\Head;
 
 //TODO: ES6 compiler
 //TODO: minifier
+//TODO: prevent duplicates?
 
 /**
  * Dependency helper, assisting with the JS files.
@@ -64,12 +65,13 @@ class Script
     public function get(): string
     {
         //TODO compile ES6 files, store the compiled JS in a folder, and replace the added file with that
+        //foreach ($this->_scripts as $bit) { if ($bit['type'] == 'es6 file') { } }
 
         //TODO minify and unify (https://github.com/matthiasmullie/minify ?)
-        if ($this->_settings->getMerge()) {
+        if ($this->_settings->getMerged()) {
             /* do merge */
         }
-        if ($this->_settings->getMinify()) {
+        if ($this->_settings->getMinified()) {
             /* do minify */
         }
 

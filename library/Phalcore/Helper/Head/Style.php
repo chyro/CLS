@@ -1,6 +1,8 @@
 <?php
 namespace Phalcore\Helper\Head;
 
+use Phalcore\Env;
+
 /**
  * Dependency helper, assisting with the CSS files.
  * Supports SCSS files, using Leafo's compiler.
@@ -50,7 +52,7 @@ class Style
         array_unshift($this->_styles, ['type' => 'scss snippet', 'snippet' => $style]);
     }
 
-    public function getCompiler(): Compiler
+    public function getCompiler()/*: Compiler*/
     {
         if (empty($this->_compiler)) {
             $this->_compiler = new \Leafo\ScssPhp\Compiler();
@@ -58,7 +60,7 @@ class Style
         return $this->_compiler;
     }
 
-    public function getMinifier(): Minifier
+    public function getMinifier()/*: Minifier*/
     {
         if (empty($this->_minifier)) {
             //$this->_minifier = ???;
@@ -68,13 +70,40 @@ class Style
 
     public function get(): string
     {
-        //TODO compile SCSS files, store the compiled CSS in a folder, and replace the _styles scss file with the new css file
+        // process SCSS files: compile, store, replace
+        foreach ($this->_styles as $i => $bit) {
+            if ($bit['type'] == 'scss file') {
+                // calculate file paths
+                $sourceFileRelativePath = $bit['path'];
+                $sourceFileFullPath = Env::getDocroot() . $sourceFileRelativePath;
+                $sourceFileInfo = pathinfo($sourceFileRelativePath);
+                $targetFileName = \Phalcore\Text::slugify($sourceFileInfo['dirname'] . '/' . $sourceFileInfo['filename']) . '.css';
+                $targetFileRelativePath = $this->_settings->getCacheDir('css') . $targetFileName;
+                $targetFileFullPath = Env::getDocroot() . $targetFileRelativePath;
+
+                // compile if necessary
+                if (!file_exists($targetFileFullPath) || filemtime($targetFileFullPath) < filemtime($sourceFileFullPath)) {
+                    $scssSnippet = file_get_contents($sourceFileFullPath);
+                    $cssSnippet = $this->getCompiler()->compile($scssSnippet);
+                    file_put_contents($targetFileFullPath, $cssSnippet);
+                }
+
+                // replace SCSS file with the newly compiled CSS file
+                $this->_styles[$i]['path'] = $targetFileRelativePath;
+                $this->_styles[$i]['type'] = 'css file';
+            } elseif ($bit['type'] == 'scss snippet') {
+                $scssSnippet = $bit['snippet'];
+                $cssSnippet = $this->getCompiler()->compile($scssSnippet);
+                $this->_styles[$i]['snippet'] = $cssSnippet;
+                $this->_styles[$i]['type'] = 'css snippet';
+            }
+        }
 
         //TODO minify and unify (https://github.com/matthiasmullie/minify ?)
-        if ($this->_settings->getMerge()) {
+        if ($this->_settings->getMerged()) {
             /* do merge */
         }
-        if ($this->_settings->getMinify()) {
+        if ($this->_settings->getMinified()) {
             /* do minify */
         }
 

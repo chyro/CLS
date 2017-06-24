@@ -34,30 +34,30 @@ class Head extends \Phalcon\Di\Injectable
         }
     }
 
-    public function getCacheDir(/*array|string*/ $paths, string $for = '')/*: array|string*/
+    public function getCacheDir(string $for = '')/*: array|string*/
     {
         if (!empty($for)) {
-            return empth($this->cacheDirs[$for]) ? '' : $this->cacheDirs[$for];
+            return empty($this->cacheDirs[$for]) ? '' : $this->cacheDirs[$for];
         } // else
         return $this->cacheDirs;
     }
 
-    public function setMinify(bool $switch)
+    public function setMinified(bool $switch)
     {
         $this->doMinify = $switch;
     }
 
-    public function getMinify(): bool
+    public function getMinified(): bool
     {
         return $this->doMinify;
     }
 
-    public function setMerge(bool $switch)
+    public function setMerged(bool $switch)
     {
         $this->doMerge = $switch;
     }
 
-    public function getMerge(): bool
+    public function getMerged(): bool
     {
         return $this->doMerge;
     }

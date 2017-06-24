@@ -96,10 +96,10 @@ try {
         $headHelper = new \Phalcore\Helper\Head();
         $headHelper->setCacheDir(['css' => $config->application->CSSCacheDir, 'js' => $config->application->JSCacheDir]);
         if ($config->application->minifyScripts) {
-            $headHelper->setMinify(true);
+            $headHelper->setMinified(true);
         }
         if ($config->application->mergeScripts) {
-            $headHelper->setMerge(true);
+            $headHelper->setMerged(true);
         }
         return $headHelper;
     }, true);
