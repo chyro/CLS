@@ -20,6 +20,9 @@ Tested with:
 TODO:
 - DB init script (single admin user?)
 - Create a webapp that works offline on mobile
+- - hourly, download the last notifications, display on status bar / icon
+- - on launch, display notifications, with response actions
+- - if online, store response actions for later processing
 - user admin dashboard (modules?)
 - move the services out of index.php and into app/config/services.php or app/bootstrap.php
 - Phalcore classes for base controller (init function, ACL maybe)? base user (session, ACL)?
@@ -39,6 +42,9 @@ TODO:
 - Plugin needs to display notifications e.g. friends requests, movie suggestions
 - Replace the movie API - obviously it's not working out
 - create an "artisan"-style bin to install / update the vendor dependencies? use composer?
+- Browser plugin:
+- - hostname / IP should not be in it... but then how do I match the URL permissions to the right site? Permissions for the whole internet is overkill... Based on query string maybe?
+- - should display notifications and actions
 
 Folders:
 - app:       core app code (models, controllers, views, etc)

@@ -38,7 +38,7 @@ var initHelper = {
     var pairButton = document.createElement('button');
     pairButton.setAttribute('id', 'pair-profile');
     pairButton.innerText = 'Pair this account';
-    document.body.insertBefore(pairButton, initHelper.profileForm);
+    initHelper.profileForm.parentNode.insertBefore(pairButton, initHelper.profileForm);
 
     pairButton.addEventListener("click", initHelper.pairProfile);
     // Should I add an un-pair button here as well? Probably redundant.
