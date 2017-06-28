@@ -56,6 +56,7 @@ class Style
     {
         if (empty($this->_compiler)) {
             $this->_compiler = new \Leafo\ScssPhp\Compiler();
+            $this->_compiler->addImportPath(Env::getDocroot() . 'scss');
         }
         return $this->_compiler;
     }
@@ -108,10 +109,11 @@ class Style
         }
 
         $HTMLBits = [];
+        $url = $this->_settings->getDI()->get('url');
         foreach ($this->_styles as $bit) {
             $bitHTML = '';
             if ($bit['type'] == 'css file') {
-                $bitHTML = '<link rel="stylesheet" href="' . $bit['path'] . '" media="' . $bit['media'] . '" type="text/css" />';
+                $bitHTML = '<link rel="stylesheet" href="' . $url->get($bit['path']) . '" media="' . $bit['media'] . '" type="text/css" />';
             } else if ($bit['type'] == 'css snippet') {
                 $bitHTML = '<style>' . $bit['snippet'] . '</style>';
             }

@@ -76,10 +76,11 @@ class Script
         }
 
         $HTMLBits = [];
+        $url = $this->_settings->getDI()->get('url');
         foreach ($this->_scripts as $bit) {
             $bitHTML = '';
             if ($bit['type'] == 'js file') {
-                $bitHTML = '<script type="text/javascript" src="' . $bit['path'] . '"></script>';
+                $bitHTML = '<script type="text/javascript" src="' . $url->get($bit['path']) . '"></script>';
             } else if ($bit['type'] == 'js snippet') {
                 $bitHTML = '<script type="text/javascript">' . $bit['snippet'] . '</script>';
             }

@@ -9,34 +9,36 @@ $user = $this->session->getUser();
 <?php echo $this->head->styles()->get(); ?>
 </head>
 <body>
-<div>
-    Nav
-    <ul>
-        <li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
+<header>
+    <a href="<?php echo $this->url->get(['for' => 'top']); ?>" class="logo">CLS</>
+    <nav>
+        <a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a>
         <?php if (empty($user)): ?>
-        <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
-        <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
+        <a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a>
+        <a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a>
         <?php else: ?>
-        <li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
-        <li>as <?php echo $user->name; ?></li>
-        <li><a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a></li>
-        <li><a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a></li>
+        <a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a>
+        <a>as <?php echo $user->name; ?></a>
+        <a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a>
+        <a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a>
         <?php endif; ?>
-    </ul>
-</div>
+    </nav>
+</header>
 
-<div>
+<div class="flash">
     Flash
     <?php $this->flash->output(); ?>
     <?php //$messages = $this->flash->getMessages(); ?>
     <?php //$this->flash->clear(); ?>
 </div>
 
-<h1>Layout: before</h1>
-
+<main>
 <?php echo $this->getContent() ?>
+</main>
 
-<h1>Layout: after</h1>
+<aside></aside>
+
+<footer><nav><a href="https://github.com/chyro/CLS">Github</a></nav></footer>
 
 <?php echo $this->head->scripts()->get(); ?>
 </body>

@@ -11,17 +11,8 @@ use Watchlist\Models\User;
  * - login
  * - profile info
  */
-class UserController extends \Phalcon\Mvc\Controller
+class UserController extends \Phalcore\Controller
 {
-    //TODO: move to a parent controller
-    public function redirect(string $url) // should I allow for a message here? What then about message / error / warning?
-    {
-        //TODO: if $url is an array, $url = $this->url->get($url)?
-        $this->response->redirect($url, true);
-        $this->view->disable();
-        return;
-    }
-
     public function indexAction()
     {
         if (empty($this->session->getUser())) {
