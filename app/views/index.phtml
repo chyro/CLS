@@ -9,20 +9,30 @@ $user = $this->session->getUser();
 <?php echo $this->head->styles()->get(); ?>
 </head>
 <body>
-<header>
-    <a href="<?php echo $this->url->get(['for' => 'top']); ?>" class="logo">CLS</>
-    <nav>
-        <a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a>
-        <?php if (empty($user)): ?>
-        <a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a>
-        <a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a>
-        <?php else: ?>
-        <a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a>
-        <a>as <?php echo $user->name; ?></a>
-        <a href="<?php echo $this->url->get(['for' => 'logout']); ?>">Logout</a>
-        <a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a>
-        <?php endif; ?>
-    </nav>
+<header class="main-menu">
+  <nav>
+    <ul>
+      <li>
+        <a href="<?php echo $this->url->get(['for' => 'top']); ?>" class="logo">CLS</a>
+      </li>
+    </ul>
+    <ul>
+      <li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
+      <?php if (empty($user)): ?>
+      <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
+      <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
+      <?php else: ?>
+      <li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
+      <li class="menu-item">
+        <i class="fa fa-user"></i> <?php echo $user->name; ?>
+        <ul>
+          <li><a href="<?php echo $this->url->get(['for' => 'logout']); ?>"><i class="fa fa-btn fa-power-off"></i> Logout</a></li>
+          <li><a href="<?php echo $this->url->get(['for' => 'user profile']); ?>">My Account</a></li>
+        </ul>
+      </li>
+      <?php endif; ?>
+    </ul>
+  </nav>
 </header>
 
 <div class="flash">

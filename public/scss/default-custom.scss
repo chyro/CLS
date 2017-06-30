@@ -1,0 +1,110 @@
+/* default SCSS file, included in every page */
+
+/*
+Color Scheme
+*/
+
+@import 'pastel-purple-theme';
+
+/*
+Page Layout
+
++-------------------+
+| HEADER            |
++------------+------+
+| PAGE       | SIDE |
++------------+------+
+| FOOTER            |
++-------------------+
+*/
+
+$header-height: 50px;
+$aside-width: 250px;
+
+body {
+  margin: 0;
+  header {
+    position: fixed;
+    top: 0;
+    height: $header-height;
+    width: 100%;
+  }
+  div.flash {
+    position: fixed;
+    top: $header-height;
+    width: 500px;
+    left: calc( 50% - 250px );
+  }
+  main, aside {
+    position: absolute;
+    height: calc( 100% - #{$header-height * 2} );
+    margin: $header-height 0;
+    overflow: auto;
+  }
+  main {
+    left: 0;
+    width: calc( 100% - #{$aside-width} );
+  }
+  aside {
+    right: 0;
+    width: $aside-width;
+  }
+  footer {
+    position: fixed;
+    bottom: 0;
+    height: $header-height;
+    width: 100%;
+  }
+}
+
+/* TODO: simpler layout for smaller windows*/
+
+/* Page Colors */
+body {
+  header {
+    background-color: $color-primary-0;
+    color: $color-primary-1;
+  }
+  main {
+    //background-color: $color-primary-1*1.6;
+  }
+  aside {
+    background-color: $color-secondary-1-0;
+  }
+  footer {
+    background-color: $color-secondary-2-1;
+    color: $color-secondary-2-0;
+    border-top: 1px solid $color-secondary-2-2;
+  }
+}
+
+/*
+Header Styles
+*/
+
+header {
+  a {
+    color: $color-primary-1;
+    text-decoration: none;
+    line-height: $header-height;
+  }
+  > a.logo {
+    font-size: $header-height * .7;
+    margin-left: 5px;
+  }
+  > nav {
+    float: right;
+    > a {
+      padding: 0 5px;
+    }
+  }
+}
+
+footer {
+  text-align: center;
+  a {
+    color: $color-secondary-2-2;
+    line-height: $header-height;
+  }
+}
+

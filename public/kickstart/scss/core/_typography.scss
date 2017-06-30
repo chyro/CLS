@@ -1,0 +1,246 @@
+@mixin type-default {
+  font-family: $default-font-family;
+  font-size: $default-font-size;
+  font-size: calc(#{$default-font-size - 2} + #{$scalingFactor});
+  line-height: $default-line-height;
+  line-height: calc(#{$default-line-height} + #{$scalingFactor});
+  color: $default-font-color;
+}
+
+html {
+  color: map-get($black, lightest);
+}
+
+ul, ol {
+  margin: 0 {
+    bottom: $space;
+  };
+  line-height: 1.45rem;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  line-height: normal;
+}
+
+p {
+  margin: 0 {
+    bottom: $space;
+  };
+  line-height: $default-line-height;
+}
+
+a {
+  text-decoration: none;
+  color: map-get($colors, blue);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@mixin pre-default {
+  color: darken(map-get($colors, blue), 25%);
+  border-radius: $space / 5;
+  padding: $space / 5;
+  font-family: $mono-font-family;
+  word-break: normal;
+  hyphens: none;
+  tab-size: 2;
+  word-wrap: break-word;
+  border: 0px !important;
+  margin: 0 {
+    bottom: $space;
+  };
+}
+
+@mixin code-default {
+  margin-bottom: 0px;
+  padding: 0 ($space / 5 / 3);
+}
+
+@mixin p-default($content-optimized: false) {
+  font-size: 1rem;
+  margin-bottom: $space;
+  line-height: $default-line-height;
+
+  @if $content-optimized {
+    font-size: 1.25rem;
+    line-height: 1.85rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@mixin hero-default {
+  padding: {
+    top: $space;
+    top: 2vw;
+    bottom: $space;
+    bottom: 2vw;
+  };
+  min-height: 450px;
+  min-height: 35vw;
+  background: $primary-color;
+  margin-bottom: $space;
+  box-shadow: inset 0px -30px 100px -20px hsla(0, 0%, 0%, 0.15), inset 0px 40px 90px -20px rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  > h1, > h2, > h3, > h4, > h5, > h6, > p {
+    text-align: center;
+    font-weight: 300;
+  }
+
+  h1, h2, h3, h4, h5, h6, p {
+    color: inherit;
+  }
+
+  h1 {
+    @include heading-xxl;
+  }
+
+  h2 {
+    @include heading-xl;
+  }
+
+  h3 {
+    @include heading-lg;
+  }
+
+  h4 {
+    @include heading-md;
+  }
+
+  h5 {
+    @include heading-rg;
+  }
+
+  h6 {
+    @include heading-sm;
+  }
+
+  > img {
+    margin: 0px auto;
+    display: block;
+  }
+}
+
+@mixin heading-break {
+  margin: {
+    top: 2rem;
+  };
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+@mixin page-heading-default {
+  h1, h2, h3, h4, h5, h6 {
+    border-bottom: 1px solid map-get($white, darker);
+    padding-bottom: $space / 2;
+  }
+}
+
+@mixin heading-xxl-default {
+  font-size: 3rem;
+  margin: {
+    bottom: 1.65rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-xl-default {
+  font-size: 2.7rem;
+  margin: {
+    bottom: 1.5rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-lg-default {
+  font-size: 2.4rem;
+  margin: {
+    bottom: 1.25rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-md-default {
+  font-size: 2.1rem;
+  margin: {
+    bottom: 1.15rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-rg-default {
+  font-size: 1.8rem;
+  margin: {
+    bottom: 1rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-sm-default {
+  font-size: 1.5rem;
+  margin: {
+    bottom: 0.85rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-xs-default {
+  font-size: 1.2rem;
+  margin: {
+    bottom: 0.7rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin heading-xxs-default {
+  font-size: 0.9rem;
+  margin: {
+    bottom: 0.5rem;
+  };
+
+  @include heading-break;
+}
+
+@mixin list-default($style: "none", $layout: "vertical") {
+  margin-bottom: $space;
+
+  @if $style == "unstyled" {
+    @include list-unstyled;
+  }
+
+  @if $layout == "horizontal" {
+    @include list-horizontal;
+  }
+}
+
+@mixin list-unstyled {
+  padding: 0;
+  list-style: none;
+
+  > li {
+    margin-bottom: 0.85rem;
+  }
+}
+
+@mixin list-horizontal {
+  > li {
+    display: inline-block;
+    margin-right: 5px;
+  }
+}

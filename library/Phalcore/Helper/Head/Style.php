@@ -56,7 +56,9 @@ class Style
     {
         if (empty($this->_compiler)) {
             $this->_compiler = new \Leafo\ScssPhp\Compiler();
-            $this->_compiler->addImportPath(Env::getDocroot() . 'scss');
+            foreach ($this->_settings->getImportPaths('scss') as $importPath) {
+                $this->_compiler->addImportPath(Env::getDocroot() . $importPath);
+            }
         }
         return $this->_compiler;
     }

@@ -1,0 +1,364 @@
+//
+// Theme: Default
+// ==============
+// Theme files wrap Kickstart's mixins into duplicate mixins without the
+// "-default". This allows theme artists to insert their own styles by
+// extending the default ones. Because the default theme just does direct
+// assignment to the final namespaces, it overrides without actually
+// changing anything.
+//
+
+@import "core/_normalize";
+
+// Variables
+// ---------
+
+// Grayscale
+$white: (dark: #F7F7F7, darker: #EDEDED, darkest: #CCC);
+$gray: (lightest: #BBB, lighter: #AAA, light: #999, dark: #777, darker: #666, darkest: #555);
+$black: (lightest: #444, lighter: #333, light: #222);
+
+// Rainbow
+$colors: (red: #CA3518, orange: darkorange, yellow: #ffe312, green: #58AA00, blue: #47A5DF, violet: darkmagenta);
+
+// Vendor libraries
+@import url(//fonts.googleapis.com/css?family=Lato:300,400,700,400italic);
+
+// Ten point design variables
+// --------------------------
+// Modifying just these ten variables will take care of 90% of your theme
+
+$primary-color: map-get($colors, blue);
+$secondary-color: map-get($white, darker);
+$space: 25px;
+$heading-font-family: "museo-sans", "Lato", helvetica neue, sans-serif;
+$default-font-family: "museo-sans", "Lato", helvetica neue, sans-serif;
+$mono-font-family: "ubuntu-mono", monospace;
+$default-font-size: 16px;
+$default-font-color: map-get($gray, darkest);
+$default-line-height: 1.45rem;
+
+// --------------------------
+
+$scalingFactor: 0.2vw;
+
+$rootElement: (paddingV: 5px, paddingH: 12px, border-radius: 3px);
+
+//
+// Core styling
+// ------------
+// Lowest-level styling meant to be inherited by components.
+//
+
+@import "core/_index";
+
+// Grid
+
+@mixin wrapper($args...) {
+  @include wrapper-default($args...);
+}
+
+// Typography
+// ----------
+
+@mixin pre {
+  @include pre-default;
+}
+
+pre {
+  @include pre;
+}
+
+@mixin code {
+  @include code-default;
+}
+
+@mixin p($args...) {
+  @include p-default($args...);
+}
+
+@mixin page-heading {
+  @include page-heading-default;
+
+  h1, h2, h3, h4, h5, h6 {
+    // Styles should go here.
+ 
+  }
+}
+
+@mixin hero {
+  @include hero-default;
+
+  @content;
+}
+
+@mixin heading-xxl {
+  @include heading-xxl-default;
+
+  @content;
+}
+
+@mixin heading-xl {
+  @include heading-xl-default;
+
+  @content;
+}
+
+@mixin heading-lg {
+  @include heading-lg-default;
+
+  @content;
+}
+
+@mixin heading-md {
+  @include heading-md-default;
+
+  @content;
+}
+
+@mixin heading-rg {
+  @include heading-rg-default;
+
+  @content;
+}
+
+@mixin heading-sm {
+  @include heading-sm-default;
+
+  @content;
+}
+
+@mixin heading-xs {
+  @include heading-xs-default;
+
+  @content;
+}
+
+@mixin heading-xxs {
+  @include heading-xxs-default;
+
+  @content;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $heading-font-family;
+}
+
+h1 {
+  @include heading-lg;
+}
+
+h2 {
+  @include heading-md;
+}
+
+h3 {
+  @include heading-rg;
+}
+
+h4 {
+  @include heading-sm;
+}
+
+h5 {
+  @include heading-xs;
+}
+
+h6 {
+  @include heading-xxs;
+}
+
+@mixin type {
+  @include type-default;
+}
+
+html {
+  @include type;
+}
+
+@mixin list($args...) {
+  @include list-default($args...);
+}
+
+//
+// Base Components
+// ===============
+// Base components get imported first so they can be custom themed and
+// used again in other parts of the core library.
+//
+
+@import "core/_base_components";
+
+// Alerts
+// ------
+
+@mixin alert($args...) {
+  @include alert-default($args...);
+}
+
+// Buttons
+// -------
+
+@mixin button($args...) {
+  @include button-default($args...);
+}
+
+@mixin button-group($args...) {
+  @include button-group-default($args...);
+}
+
+@mixin button-color($args...) {
+  @include button-color-default($args...);
+}
+
+@mixin button-size($args...) {
+  @include button-size-default($args...);
+}
+
+// Containers
+// ----------
+
+@mixin container($args...) {
+  @include container-default($args...);
+}
+
+@mixin container-color($args...) {
+  @include container-color-default($args...);
+}
+
+// HR
+// --
+
+@mixin hr {
+  @include hr-default;
+}
+
+// Icons
+// -----
+
+@mixin icon($args...) {
+  @include icon-default($args...);
+}
+
+hr {
+  @include hr;
+}
+
+// Images
+// ------
+
+@mixin thumbnail-content($args...) {
+  @include thumbnail-content-default($args...);
+}
+
+@mixin thumbnail {
+  @include thumbnail-default;
+}
+
+// Labels
+// ------
+
+@mixin label($args...) {
+  @include label-default($args...);
+}
+
+// Navigation
+// ----------
+
+@mixin navbar($args...) {
+  @include navbar-default($args...);
+}
+
+@mixin navbar-color($args...) {
+  @include navbar-color-default($args...);
+}
+
+@mixin dropdown_menu {
+  @include dropdown_menu-default;
+}
+
+// Table
+// -----
+
+@mixin table($args...) {
+  @include table-default($args...);
+}
+
+@mixin table-zebra($args...) {
+  @include table-zebra-default($args...);
+}
+
+@mixin table-hover($args...) {
+  @include table-hover-default($args...);
+}
+
+@mixin table-bordered($args...) {
+  @include table-bordered-default($args...);
+}
+
+@mixin table-blank($args...) {
+  @include table-blank-default($args...);
+}
+
+//
+// Dependent Components
+// ====================
+// Dependent components keep code DRY by reusing core and base
+// componenets that have already been styled by the theme.
+//
+
+@import "core/_dependent_components";
+
+// Forms
+// -----
+
+@mixin form($args...) {
+  @include form-default($args...);
+}
+
+@mixin form_group($args...) {
+  @include form_group-default($args...);
+}
+
+// Growls
+// ------
+
+@mixin growl {
+  @include growl-default;
+}
+
+// Modals
+// ------
+
+@mixin modal {
+  @include modal-default;
+}
+
+// Pagination
+// ----------
+
+@mixin pagination($args...) {
+  @include pagination-default($args...);
+}
+
+// Tabs
+// ----
+
+@mixin tabs {
+  @include tabs-default;
+}
+
+@mixin tab_pane_container {
+  @include tab_pane_container-default;
+}
+
+// Tooltips
+// --------
+
+@mixin tooltip_trigger {
+  @include tooltip_trigger-default;
+}
+
+@import "core/_direct-apply.sass";
+@import "vendor/_index";
+

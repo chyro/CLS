@@ -12,6 +12,9 @@ use Movies\OMDb as MovieApi;
  * Keeping all the API functions in this controller for now. A separate module would
  * be nice, but doesn't really fit in my current subfolder installation. We'll see
  * how many functions we get.
+ *
+ * Not basing this controller off Phalcore's base controller, since we don't use
+ * styles. I might consider making a Phalcore "base API controller" at some stage.
  */
 class ApiController extends \Phalcon\Mvc\Controller
 {

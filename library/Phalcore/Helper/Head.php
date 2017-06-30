@@ -13,6 +13,7 @@ class Head extends \Phalcon\Di\Injectable
     private $_style; // HeadStyle
 
     private $cacheDirs = []; // array
+    private $importPaths = []; // array
     private $doMinify = false; // bool
     private $doMerge = false; // bool
 
@@ -40,6 +41,28 @@ class Head extends \Phalcon\Di\Injectable
             return empty($this->cacheDirs[$for]) ? '' : $this->cacheDirs[$for];
         } // else
         return $this->cacheDirs;
+    }
+
+    public function addImportPath(/*array|string*/ $paths, string $for = '')
+    {
+        if (is_array($paths)) {
+            foreach ($paths as $for => $path) {
+                $this->addImportPath($path, $for);
+            }
+        } else {
+            if (empty($this->importPaths[$for])) {
+                $this->importPaths[$for] = [];
+            }
+            $this->importPaths[$for][] = $paths;
+        }
+    }
+
+    public function getImportPaths(string $for = ''): array
+    {
+        if (!empty($for)) {
+            return empty($this->importPaths[$for]) ? [] : $this->importPaths[$for];
+        } // else
+        return $this->importPaths;
     }
 
     public function setMinified(bool $switch)

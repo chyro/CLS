@@ -101,6 +101,13 @@ try {
         if ($config->application->mergeScripts) {
             $headHelper->setMerged(true);
         }
+        $headHelper->addImportPath('scss', 'scss');
+
+        // Adding Kickstart resources (should be in a saner place, e.g. base controller)
+        // http://www.adamgrant.me/development/kickstart/
+        // http://getkickstart.com/
+        $headHelper->addImportPath('kickstart/scss', 'scss');
+        $headHelper->scripts()->appendFile('kickstart/kickstart.min.js');
         return $headHelper;
     }, true);
 

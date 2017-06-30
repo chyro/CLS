@@ -23,7 +23,7 @@ use Watchlist\Models\User;
  * - "my feed" view, listing "recommended to me" and friends activity
  * - addMovie action... we need to add stuff to the movie collection at some stage obviously
  */
-class WatchlistController extends \Phalcon\Mvc\Controller
+class WatchlistController extends \Phalcore\Controller
 {
     /**
      * Watchlist Index
