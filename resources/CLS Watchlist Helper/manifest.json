@@ -19,9 +19,9 @@
       "js": ["helpers.js", "imdb-helper.js"]
     },
     {
-      "matches": ["http://202.171.212.225/~guilhem/cls/user/profile"],
+      "matches": ["*://*/*user/cls-pair-profile"],
       "css": ["init-helper.css"],
-      "js": ["helpers.js", "init-helper.js"]
+      "js": ["helpers.js", "pair-helper.js"]
     }
   ],
 

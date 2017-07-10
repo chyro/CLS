@@ -37,7 +37,7 @@ class ApiController extends \Phalcon\Mvc\Controller
     }
 
 /*
-<form action="http://202.171.212.225/~guilhem/cls/api/imdb-add" method="post">
+<form action="api/imdb-add" method="post">
   <input name="email" value="1234">
   <input name="apiKey" value="xjwrfa60kfjrq787550obagrcw44n8erac6bo3zo">
   <input name="imdbid" value="tt0287839">

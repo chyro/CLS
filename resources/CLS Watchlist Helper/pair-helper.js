@@ -10,7 +10,7 @@ var initHelper = {
 
   init: function() {
     initHelper.profileForm = document.getElementsByTagName('form')[0];
-    initHelper.detectProfile();
+    initHelper.detectedProfile = initHelper.detectProfile();
     if (initHelper.detectedProfile.name != ''
         && initHelper.detectedProfile.email != ''
         && initHelper.detectedProfile.apiKey != '') {
@@ -20,18 +20,21 @@ var initHelper = {
   },
 
   detectProfile: function() {
+    var detectedProfile = {};
     var fields = initHelper.profileForm.getElementsByTagName('input');
     for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
       var fieldName = field.getAttribute('name')
       if (fieldName == 'name') {
-        initHelper.detectedProfile.name = field.getAttribute('value');
+        detectedProfile.name = field.getAttribute('value');
       } else if (fieldName == 'email') {
-        initHelper.detectedProfile.email = field.getAttribute('value');
+        detectedProfile.email = field.getAttribute('value');
       } else if (fieldName == 'apiKey') {
-        initHelper.detectedProfile.apiKey = field.getAttribute('value');
+        detectedProfile.apiKey = field.getAttribute('value');
       }
+      detectedProfile.baseUrl = window.location.href.match('(.*/)user/cls-pair-profile')[1];
     }
+    return detectedProfile;
   },
 
   addPairButton: function() {
@@ -45,7 +48,7 @@ var initHelper = {
   },
 
   pairProfile: function() {
-    CLS.credentials.set(initHelper.detectedProfile.name, initHelper.detectedProfile.email, initHelper.detectedProfile.apiKey, function() { alert('Done.'); });
+    CLS.credentials.set(initHelper.detectedProfile.name, initHelper.detectedProfile.email, initHelper.detectedProfile.apiKey, initHelper.detectedProfile.baseUrl, function() { alert('Done.'); });
   }
 };
 

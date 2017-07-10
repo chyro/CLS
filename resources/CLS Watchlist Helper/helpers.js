@@ -79,7 +79,7 @@ var helpers = {
     if (!parameters) parameters = {};
     authParams = {email: CLS.credentials.current.email, apiKey: CLS.credentials.current.apiKey};
     queryParams = helpers.arrayMerge(authParams, parameters);
-    queryUrl = settings.apiUrl + apiFunction;
+    queryUrl = CLS.credentials.current.baseUrl + 'api/' + apiFunction;
 
     var request = new XMLHttpRequest();
     request.open('POST', queryUrl, true);
@@ -106,8 +106,6 @@ var helpers = {
 
 // should be in settings.js?
 var settings = {
-  apiUrl: 'http://202.171.212.225/~guilhem/cls/api/',
-  profileUrl: 'http://202.171.212.225/~guilhem/cls/user/profile', // Could we have that be a user setting, in case others install their own server?
   loglevel: 0 // 0: verbose, 1: notice, 2: critical
 };
 
@@ -122,7 +120,7 @@ var CLS = {
       helpers.log('Initializing CLS credentials');
 
       CLS.credentials.loaded = new Promise((resolve, reject) => {
-        chrome.storage.sync.get({ name : '', email: '', apiKey: ''}, function(storedCreds) {
+        chrome.storage.sync.get({ name : '', email: '', apiKey: '', baseUrl: ''}, function(storedCreds) {
           CLS.credentials.current = storedCreds;
           if (!storedCreds.name || !storedCreds.email || !storedCreds.apiKey) {
             reject('Credentials not initialized.');
@@ -134,11 +132,11 @@ var CLS = {
 
       CLS.credentials.loaded.then(res => { helpers.log('CLS credentials initialization complete.'); });
     },
-    set: function(name, email, apiKey, callback) {
-      chrome.storage.sync.set({name: name, email: email, apiKey: apiKey}, callback);
+    set: function(name, email, apiKey, baseUrl, callback) {
+      chrome.storage.sync.set({name: name, email: email, apiKey: apiKey, baseUrl: baseUrl}, callback);
     },
     unset: function(callback) {
-      chrome.storage.sync.set({name: '', email: '', apiKey: ''}, callback);
+      chrome.storage.sync.set({name: '', email: '', apiKey: '', baseUrl: ''}, callback);
     }
   },
 

@@ -13,7 +13,7 @@ CLS.loaded.then(res => {
     helpers.setFieldValue('apiKey', CLS.credentials.current.apiKey);
     document.getElementById('account-info').classList.add('initialized');
   } else {
-    helpers.setFieldValue('profileUrl', settings.profileUrl);
+    //helpers.setFieldValue('profileUrl', settings.profileUrl); // sadly I do not know the hostname until it is paired...
   }
 
   // Set the unpair button handler
@@ -25,22 +25,6 @@ CLS.loaded.then(res => {
     });
   });
 
-  /*
-  // Getting the data from the tab requires extra permissions. It is simpler to use code directly in the page.
-
-  // Checking current tab, adjusting the display
-  helpers.getCurrentTabUrl(function(tabUrl){
-    if (tabUrl == settings.profileUrl) {
-      var name = "name", email = "email", apiKey = "apiKey"; // TODO: GET THOSE FROM THE TAB
-
-      document.getElementById('account-init').classList.add('active');
-      helpers.setFieldValue('accountLabel', name + " (" + email + ")");
-    }
-  });
-
-  // TODO: add a click handler to button.pair, storing the user info and key from the current page
-  // chrome.storage.sync.set({ name: name, email: email, apiKey: apiKey });
-  */
   helpers.log("CLS popup initialization complete.");
 });
 
