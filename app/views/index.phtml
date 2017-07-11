@@ -22,7 +22,7 @@ $user = $this->session->getUser();
       <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
       <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
       <?php else: ?>
-      <li><a href="<?php echo $this->url->get(['for' => 'watchlist all']); ?>">Watchlist</a></li>
+      <li><a href="<?php echo $this->url->get(['for' => 'watchlist top']); ?>">Watchlist</a></li>
       <li class="menu-item">
         <i class="fa fa-user"></i> <?php echo $user->name; ?>
         <ul>

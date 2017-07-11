@@ -7,19 +7,26 @@ namespace Movies;
  *
  * http://www.omdbapi.com/
  */
-class OMDb {
+class OMDb implements MovieApi
+{
     /**
      * @var string
      */
     private static $url = 'http://www.omdbapi.com/';
+
     /**
      * @var array
      */
     private static $defaultParams = [];//['plot' => 'short', 'r' => 'json'];
 
-    public static function setBaseUrl(string $url)
+    public static function init(array $settings)
     {
-        self::$url = $url;
+        if (!empty($settings['baseUrl'])) {
+            self::$url = $settings['baseUrl'];
+        }
+        if (!empty($settings['defaultParams'])) {
+            self::$defaultParams = $settings['defaultParams'];
+        }
     }
 
     /**
@@ -27,19 +34,37 @@ class OMDb {
      * Example returned string: {"Title":"On the Other Side of the Tracks","Year":"2012", etc }
      * Example error string:    {"Response":"False","Error":"Movie not found!"}
      */
-    public function getByID(string $IMDbID)
+    public static function getByIMDbID(string $IMDbID)
     {
         $params = array_merge(self::$defaultParams, ['i' => $IMDbID]);
         $queryURL = self::$url . '?' . http_build_query($params);
         $info = file_get_contents($queryURL);
-        $info = json_decode($info);
-        if (!empty($info->error)) {
-            return null;
-        }
-        // TODO: normalize the fields? create a Movies\Movie based on this array?
-        return $info;
+        return self::_normalize($info);
     }
 
-    //TODO: search by title, search by actor, search by director... get posted by IMDBID...
+    private static function _normalize(string $OMDbJSON)
+    {
+        $movieInfo = json_decode($OMDbJSON);
+        if (!empty($movieInfo->error)) {
+            return null;
+        }
+
+        $normalizedInfo = [];
+
+        if (!empty($movieInfo->Title)) {
+            $normalizedInfo['title'] = $movieInfo->Title;
+        }
+
+        foreach ($movieInfo->Ratings as $rating) {
+            if ($rating->Source == 'Internet Movie Database') {
+                $normalizedInfo['rt_imdb'] = reset(explode('/', $rating->Value));
+            } else if ($rating->Source == 'Rotten Tomatoes') {
+                $normalizedInfo['rt_rt'] = reset(explode('%', $rating->Value));
+            }
+        }
+
+        return $normalizedInfo;
+    }
+
 }
 

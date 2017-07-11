@@ -13,7 +13,8 @@ use \Phalcon\Session\AdapterInterface as SessionEngine;
  * code.
  * (This should probably implement AdapterInterface, though.)
  */
-class Session {
+class Session
+{
     /**
      * @var SessionEngine
      */

@@ -5,9 +5,11 @@ namespace Phalcore\Models\Mongo;
  * Simple, lightweight DBRef keeping track of the model class
  * to instantiate them back upon query.
  */
-abstract class AdHocDBRef {
+abstract class AdHocDBRef
+{
 
-    static public function create($item) {
+    static public function create($item)
+    {
         //Might be better with ["class" => $class, "dbref" => DBRef::create()] ?
         return [
                 "collection" => $item->getSource(),
@@ -16,17 +18,20 @@ abstract class AdHocDBRef {
             ];
     }
 
-    static public function expand($ref) {
+    static public function expand($ref)
+    {
         if (!class_exists($ref["class"])) {
             throw new MongoException("Error expanding DB value back into a class ($ref)");
         }
 
         $cls = $ref["class"];
+        // TODO: keep a in-RAM cache of that, to avoid querying the DB 20 times for the same object!
         return $cls::findById($ref["id"]);
         //return new $cls($ref["id"]);
     }
 
-    static public function isRef($ref) {
+    static public function isRef($ref)
+    {
         return (is_array($ref)
             && count($ref) == 3
             && array_key_exists("collection", $ref)

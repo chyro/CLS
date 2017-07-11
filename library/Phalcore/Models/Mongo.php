@@ -4,7 +4,8 @@ namespace Phalcore\Models;
 /**
  * Enhanced ORM, with extra convenience features
  */
-abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
+abstract class Mongo extends \Phalcon\Mvc\MongoCollection
+{
 
     // __construct is final, so support for object initialization (e.g. default values for fields) is offered via the factory pattern:
     public static function factory()
@@ -29,7 +30,8 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
      * - handle exceptions
      * - convert objects to references before saving
      */
-    public function save() {
+    public function save()
+    {
         //convert objects into refs
         $this->deepObjToRef();
 
@@ -75,7 +77,8 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
     /**
      * Hook converting references to objects when instantiating queried objects
      */
-    public function afterFetch() {
+    public function afterFetch()
+    {
         $this->deepRefToObj();
     }
     //Alternatively, if afterFetch doesn't work, overload find and findFirst (and findByID?)
@@ -83,8 +86,12 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
     /**
      * Recursive function, for deep object -> reference conversion
      * (might be more efficient to pass the array by reference)
+     *
+     * TODO: offer a "simple" query that does not do this conversion, which might be too time-consuming.
+     * TODO: convert Mongo types, e.g. dates.
      */
-    private function _recO2R($blob) {
+    private function _recO2R($blob)
+    {
         $changed = false;
         foreach($blob as $key => $val) {
             if ($val instanceof \Phalcore\Models\Mongo) {
@@ -106,7 +113,8 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
      * Function converting Mongo objects to Mongo-ish references on all
      * the fields of the current object, as well as any contained in arrays.
      */
-    private function deepObjToRef() {
+    private function deepObjToRef()
+    {
         $allFields = $this->toArray();
         foreach ($allFields as $key => $val) {
             if ($val instanceof \Phalcore\Models\Mongo) {
@@ -124,7 +132,8 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
     /**
      * Recursive function, for deep reference -> object conversion
      */
-    private function _recR2O($blob) {
+    private function _recR2O($blob)
+    {
         $changed = false;
         foreach($blob as $key => $val) {
             if (Mongo\AdHocDBRef::isRef($val)) {
@@ -146,7 +155,8 @@ abstract class Mongo extends \Phalcon\Mvc\MongoCollection {
      * Function converting Mongo objects to Mongo-ish references on all
      * the fields of the current object, as well as any contained in arrays.
      */
-    private function deepRefToObj() {
+    private function deepRefToObj()
+    {
         $allFields = $this->toArray();
         foreach ($allFields as $key => $val) {
             if (Mongo\AdHocDBRef::isRef($val)) {

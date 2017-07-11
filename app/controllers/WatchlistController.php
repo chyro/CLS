@@ -15,10 +15,6 @@ use Watchlist\Models\User;
  * etc
  *
  * TODO:
- * - features
- * - design
- * - all the stuff
- * ... ... ...
  * - "my movies" view, similar to GoodRead's "my bookshelf" view, listing watched + to watch
  * - "my feed" view, listing "recommended to me" and friends activity
  * - addMovie action... we need to add stuff to the movie collection at some stage obviously
@@ -33,18 +29,12 @@ class WatchlistController extends \Phalcore\Controller
      */
     public function indexAction()
     {
-        $user = User::findFirst([["name"=>"Guilhem"]]);
+        // TODO: ACL, redirect to login if not logged in for pretty much any action in this controller
+        $user = $this->session->getUser();
+
         $watchcal = $user->watched;
         $watchlist = $user->watchlist;
         $recommended = $user->recommended;
-        /*
-        //{watched:{$elemMatch: {name: "Guilhem"}}}
-        $watchcal = Movie::find([["watched" => ['$elemMatch' => ["name" => "Guilhem"]]], 'limit' => 5]);
-        //{watchlist:{$elemMatch: {name: "Guilhem"}}}
-        $watchlist = Movie::find([["watchlist" => ['$elemMatch' => ["name" => "Guilhem"]]], 'limit' => 5]);
-        //{recommended:{$elemMatch: {to: "Guilhem"}}}
-        $recommended = Movie::find([["recommended" => ['$elemMatch' => ["to" => "Guilhem"]]], 'limit' => 5]);
-        */
 
         $this->view->watchcal = $watchcal;
         $this->view->watchlist = $watchlist;
@@ -59,7 +49,10 @@ class WatchlistController extends \Phalcore\Controller
      */
     public function watchlistAction()
     {
-        $user = User::findFirst([["name"=>"Guilhem"]]);
+        // TODO: remove the list-specific action, or merge them. Don't create actions based on lists, but based on meaningful use cases.
+
+        $user = $this->session->getUser();
+
         $watchlist = $user->watchlist;
         if (!is_array($watchlist)) $watchlist = [];
 
@@ -76,45 +69,38 @@ class WatchlistController extends \Phalcore\Controller
      * TODO: add some JS to help insert the movie,
      * looking up in the local DB and other sources
      * (imdb?) for matches on the title
-     * http://stackoverflow.com/a/7744369
-     * http://sg.media-imdb.com/suggests/$titleFirstLetter/$title.json
-     * http://www.omdbapi.com/?t=$title&y=&plot=short&r=json
-     * https://www.themoviedb.org/faq/api
      */
     public function addAction()
     {
+        $user = $this->session->getUser();
+
         if ($this->request->isPost()) {
-            $user = User::findFirst([["name"=>"Guilhem"]]);
-            $watchlist = $user->watchlist;
-            if (!is_array($watchlist)) $watchlist = [];
 
             $movie = null;
-            if (!$this->request->getPost('imdb') && !$this->request->getPost('title'))
-                throw new \Exception("Can't add to watchlist: movie not specified");
+            if ($imdbID = $this->request->getPost('imdb')) {
+                $movie = Movie::getMovie($imdb_id);
+            }
 
-            if ($imdb_id = $this->request->getPost('imdb'))
-                $movie = Movie::findFirst([["imdb" => $imdb_id]]);
-            if (!$movie && $title = $this->request->getPost('title'))
-                $movie = Movie::findFirst([["title" => $title]]);
-            if (!$movie && $movieId = $this->dispatcher->getParam('movie_id'))
+            if (!$movie && $movieId = $this->dispatcher->getParam('movie_id')) {
                 $movie = Movie::findFirst([["_id" => $movieId]]);
+            }
 
-            //if (!$movie)
-                //TODO: add movie
+            if (!$movie && $title = $this->request->getPost('title')) {
+                $movie = Movie::findFirst([["title" => $title]]);
+                //TODO: search IMDb for movies by approximate title
+            }
 
-            //should check the movie is not in the list yet, and skip
+            if (empty($movie)) {
+                throw new \Exception("Can't add to watchlist: movie not specified");
+            }
 
-            $item = [
-                    "movie" => $movie,
-                ];
-            if ($rating = $this->request->getPost('rating', 'int'))
-                $item["rating"] = $this->request->getPost('rating', 'int');
 
-            $watchlist[] = $item;
-            $user->watchlist = $watchlist;
-            //Warning: I don't know the details of Phalcon Mongo libraries,
-            //but this seriously looks non-atomic. Can't I just $push?
-            //Of course you can push, moron! Redo this thing!
+            $extraOptions = [];
+            if ($rating = $this->request->getPost('rating', 'int')) {
+                $extraOptions["rating"] = $rating;
+            }
+
+            $user->addMovie($movie, 'watchlist', $extraOptions);
 
             $success = $user->save();
             if ($success) {
@@ -146,7 +132,7 @@ class WatchlistController extends \Phalcore\Controller
         if (!$movieId = $this->dispatcher->getParam('movie_id'))
             throw new \Exception("Can't remove from watchlist: movie not specified");
 
-        $user = User::findFirst([["name"=>"Guilhem"]]);
+        $user = $this->session->getUser();
 
         $watchlist = $user->watchlist;
         $filteredWatchlist = array_filter($user->watchlist,
@@ -155,6 +141,8 @@ class WatchlistController extends \Phalcore\Controller
         if (count($filteredWatchlist) == count($watchlist))
             throw new \Exception("Can't remove from watchlist: movie not found in watchlist");
 
+        // TODO: move this to $user->removeMovie($movie, $list);
+        // TODO: make atomic
         $user->watchlist = $filteredWatchlist;
 
         if (!$user->save()) {
@@ -164,38 +152,20 @@ class WatchlistController extends \Phalcore\Controller
         }
     }
 
-    /**
-     * Recommended list
-     *
-     * Display the movies recommended to me, with
-     * quick-link to add it to the watchlist.
-     */
     public function recommendedAction()
     {
-        $this->view->recommended = Movie::find([["recommended" => ['$elemMatch' => ["to" => "Guilhem"]]]]);
     }
 
     public function recommendedAddAction()
     {
-        //$this->view->recommended = Movie::find([["recommended" => ['$elemMatch' => ["to" => "Guilhem"]]]]);
     }
 
-    /**
-     * Watched Movies
-     *
-     * Display the movie specified, or if not specified
-     * display all the watched movies.
-     */
     public function watchedAction()
     {
-        //$this->view->watched = Movie::find([["watched" => ['$elemMatch' => ["by" => "Guilhem"]]]]);
     }
 
     public function watchedAddAction()
     {
-        //1. add to watched
-        //2. if in watchlist, remove from watchlist
-        //$this->view->watched = Movie::find([["watched" => ['$elemMatch' => ["by" => "Guilhem"]]]]);
     }
 
     //recommendedAddAction, recommendedDeleteAction, watched, watchedAdd, watchDelete
@@ -214,10 +184,6 @@ class WatchlistController extends \Phalcore\Controller
     // modify existing, i.e. add rating or convert (to watch -> watched,
     // suggestion -> to watch)
     //public function editAction()
-    //{
-    //}
-
-    //public function deleteAction()
     //{
     //}
 
