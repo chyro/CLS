@@ -9,6 +9,9 @@ $router->add('/',
     ['controller' => 'index', 'action' => 'index'])
     ->setname('top');
 
+$router->add('/watchlist',
+    ['controller' => 'watchlist', 'action' => 'index'])
+    ->setname('watchlist top');
 $router->add('/watchlist/all',
     ['controller' => 'watchlist', 'action' => 'watchlist'])
     ->setname('watchlist all');
@@ -53,7 +56,7 @@ $router->add('/user/logout',
 $router->add('/user/register',
     ['controller' => 'user', 'action' => 'register'])
     ->setname('register');
-$router->add('/user/profile',
+$router->add('/user/cls-pair-profile', // making it exceedingly complex, so that the app's manifest.json knows when to load the JS files
     ['controller' => 'user', 'action' => 'profile'])
     ->setname('user profile');
 

@@ -17,6 +17,7 @@ define('APP_DIR', BASE_DIR . '/app');
 try {
 
     $config = new \Phalcon\Config\Adapter\Ini(APP_DIR . '/config/config.ini');
+    $localConfig = new \Phalcon\Config\Adapter\Ini(APP_DIR . '/config/config.local.ini');
 
     //Register an autoloader
     $loader = new \Phalcon\Loader();
@@ -110,6 +111,9 @@ try {
         $headHelper->scripts()->appendFile('kickstart/kickstart.min.js');
         return $headHelper;
     }, true);
+
+    // TODO: INITIALIZE THE MOVIE API library, including the third party APIS WITH THEIR KEYS, IF REQUIRED / AVAILABLE
+    \Movies\TheMovieDb::init(['apiKey' => $localConfig->MovieAPIs->TheMovieDBAPIKey]);
 
     //Handle the request
     $application = new \Phalcon\Mvc\Application($config['di']);

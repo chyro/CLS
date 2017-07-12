@@ -4,8 +4,6 @@ namespace Watchlist\Controllers;
 use Watchlist\Models\Movie;
 use Watchlist\Models\User;
 
-use Movies\OMDb as MovieApi;
-
 /**
  * API Controller
  *
@@ -84,6 +82,8 @@ class ApiController extends \Phalcon\Mvc\Controller
         $imdbID = $this->request->getPost('imdbid');
 
         $status = $user->getMovieStatus($imdbID);
+
+        //TODO: get movie from DB; check last update; fill that field in $status
 
         echo json_encode($status);
     }

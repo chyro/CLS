@@ -97,7 +97,7 @@ class User extends \Phalcore\Models\Mongo
         }
 
         $moviesList = $this->{$listName};
-        array_push($moviesList, $listItem);
+        array_push($moviesList, $listItem); // TODO: maintain unicity... on "watchlist", but not "watched"... and not "recommended"...
         $this->{$listName} = $moviesList;
 
         // TODO maybe: use an atomic Mongo array push maybe?
