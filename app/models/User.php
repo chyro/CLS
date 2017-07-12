@@ -24,7 +24,7 @@ class User extends \Phalcore\Models\Mongo
 
     public static function getDefaults()
     {
-        return [ 'watchlist' => [], 'watched' => [], 'recommended' => [], 'following' => [] ];
+        return [ 'watchlist' => [], 'watched' => [], 'recommended' => [], 'following' => [], 'apiKey' => bin2hex(random_bytes(20)) ];
     }
 
     public function getMovieStatus($imdbID)
@@ -46,21 +46,21 @@ class User extends \Phalcore\Models\Mongo
     {
         foreach ($this->{$list} as $it) {
             if ($it['movie']->IMDbID == $imdbID) {
-                return $it;
+                return $it; // what about movies watched multiple times? or recommended by many friends?
             }
         }
 
         return null;
     }
 
-    public function removeFromList($movie, $list = 'watchlist')
+    public function removeFromList(\Watchlist\Models\Movie $movie, string $list = 'watchlist')
     {
         $movieId = $movie->_id;
 
         $userMovies = $this->{$list};
         $filteredUserMovies = array_filter(
             $userMovies,
-            function($item) use($movieId) { return $item["movie"]->_id != $movieId; }
+            function ($item) use ($movieId) { return $item["movie"]->_id != $movieId; }
         );
 
         if (count($userMovies) != count($filteredUserMovies)) {
@@ -69,7 +69,7 @@ class User extends \Phalcore\Models\Mongo
         // TODO maybe: use an atomic Mongo array pop maybe? But then I lose the "$user->modify(); $user->save();" pattern... Also runtime loaded classes might get out of sync...
     }
 
-    public function addToList($movie, $listName = 'watchlist', $extraOptions = [])
+    public function addToList(\Watchlist\Models\Movie $movie, string $listName = 'watchlist', $extraOptions = [])
     {
         // Should I validate $list maybe?
         if (!empty($this->getMovieFromList($movie->IMDbID, $listName))) {
@@ -85,8 +85,9 @@ class User extends \Phalcore\Models\Mongo
 
         $listItem = ['movie' => $movie];
         if (array_key_exists('rating', $extraOptions)) {
-            $listItem['rating'] = $extraOptions['rating'];
+            $listItem['rating'] = (int) $extraOptions['rating']; // enforce existence using a default rating?
         }
+
         if ($listName == 'watched') {
             if (array_key_exists('date', $extraOptions)) {
                 $listItem['date'] = new \MongoDB\BSON\UTCDateTime((new \DateTime($extraOptions['date']))->getTimestamp() * 1000);
@@ -96,11 +97,26 @@ class User extends \Phalcore\Models\Mongo
             }
         }
 
+        if ($listName == 'recommended') {
+            $listItem['by'] = $extraOptions['by'];
+        }
+
         $moviesList = $this->{$listName};
-        array_push($moviesList, $listItem); // TODO: maintain unicity... on "watchlist", but not "watched"... and not "recommended"...
+        array_push($moviesList, $listItem); // TODO: "watchlist" must maintain unicity; "watched" can have duplicates; "recommended" must be unique by recommender.
         $this->{$listName} = $moviesList;
 
         // TODO maybe: use an atomic Mongo array push maybe?
+    }
+
+    public function updateMovieRating(\Watchlist\Models\Movie $movie, string $listName, int $rating)
+    {
+        $moviesList = $this->{$listName};
+        foreach ($moviesList as $index => $entry) {
+            if ($entry['movie']->_id == $movie->_id) {
+                $moviesList[$index]['rating'] = $rating;
+            }
+        }
+        $this->{$listName} = $moviesList;
     }
 }
 

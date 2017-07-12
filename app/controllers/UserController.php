@@ -35,7 +35,6 @@ class UserController extends \Phalcore\Controller
             $user->email = $this->request->getPost('email');
             $user->name = $this->request->getPost('name');
             $user->password = $this->security->hash($password);
-            $user->apiKey = bin2hex(random_bytes(20));
             $user->save();
 
             $this->session->login($user);

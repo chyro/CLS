@@ -49,15 +49,26 @@ class WatchlistController extends \Phalcore\Controller
      */
     public function watchlistAction()
     {
-        // TODO: remove the list-specific action, or merge them. Don't create actions based on lists, but based on meaningful use cases.
-
         $user = $this->session->getUser();
 
-        $watchlist = $user->watchlist;
-        if (!is_array($watchlist)) $watchlist = [];
+        // TODO maybe: move this to an "ajax API" controller
+        if ($this->request->isAjax()) {
+            $this->view->disable();
+            if ($this->request->getPost('action') == 'change-rating') {
+                $rating = $this->request->getPost('rating');
+                $movieID = $this->request->getPost('movie_id');
+                $movie = Movie::findFirst([["_id" => new \MongoDB\BSON\ObjectID($movieID)]]);
+                $user->updateMovieRating($movie, 'watchlist', $rating);
+                $user->save();
+                return json_encode(['result' => 'OK']);
+            }
+            return json_encode(['result' => 'error', 'message' => 'action not found']);
+        }
 
-        // sort by "most want to watch"
-        usort($watchlist, function($a, $b) { return $a->rating - $b->rating; });
+        $watchlist = $user->watchlist;
+
+        // sort by "most want to watch" (those not specified on top)
+        usort($watchlist, function($a, $b) { if (empty($a['rating'])) return -1; if (empty($b['rating'])) return 1; return $b['rating'] - $a['rating']; });
 
         $this->view->watchlist = $watchlist;
     }

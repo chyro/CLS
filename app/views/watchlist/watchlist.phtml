@@ -11,12 +11,12 @@ $this->url->get(['for' => 'watched', 'test' => 123]),
 $this->url->get(['for' => 'watched', 'movie_id' => $movie->_id])
 */
 ?>
-<?php foreach ($watchlist as $wMovie): ?>
-    <?php $movie = $wMovie["movie"]; ?>
-    <li><?php echo $movie->title; ?>
-        <?php if (isset($movie->rating)): ?>
-        [<?php echo $movie->rating; ?>]
-        <?php endif; ?>
+<?php foreach ($watchlist as $watchlistEntry): ?>
+    <?php $movie = $watchlistEntry["movie"]; ?>
+    <?php $rating = !empty($watchlistEntry["rating"]) ? $watchlistEntry["rating"] : '?'; ?>
+    <li>
+        <?php echo $movie->title; ?>
+        <span class="rtg rtg-selector" data-movie="<?php echo $movie->_id; ?>" data-rating="<?php echo $rating; ?>"><?php echo $rating; ?></span>
         <a href="<?php echo $this->url->get(['for' => 'watched add', 'movie_id' => $movie->_id]); ?>">[mark as watched]</a>
         <a href="<?php echo $this->url->get(['for' => 'watchlist delete', 'movie_id' => $movie->_id]); ?>">[forget it]</a>
     </li>
@@ -26,3 +26,75 @@ $url = $this->url->get(['for' => 'homepage']);
 //$a_tag = $this->tag->linkTo(array(array('for' => 'homepage', 'id' => 'backLink'), 'back to homepage'));
 */ ?>
 </ul>
+
+<style>
+/*
+New component / block: 'rtg', rating display / selector
+DB: integer [0-5]
+HTML: <span class="rtg rtg-selector"><?php echo $movie->rating; ?></span>
+GUI: click / tap reveals a selector, selecting { closes the selector; sets the <span> value; ajax-saves the new value }
+icons: 0: broken heart 1: meh 2: heart 3: golden heart 4: angel heart
+
+TODO: make a partial or sth (echo $this->rating($rating);)
+TODO: make proper files for SCSS, ES6... proper JS container...
+*/
+.rtg.rtg-selector { width: 1em; height: 1em; display: inline-block; background: #eee; vertical-align: middle; position: relative; border-radius: 50%; text-align: center; }
+.rtg.rtg-selector > .current-state { z-index: 0; }
+.rtg.rtg-selector > .current-state img { width: 1em; height: 1em; }
+.rtg.rtg-selector > .rating-gui { position: absolute; width: 0; height: 0; background-color: #eee; border: 3px solid silver; left: .5em; top: .5em; border-radius: 50%; opacity: 0; z-index: 10; }
+.rtg.rtg-selector:hover > .rating-gui { opacity: 1; width: 5em; height: 5em; left: -2em; top: -2em; }
+.rtg.rtg-selector > .rating-gui img { position: absolute; cursor: pointer; top: 0; left: 0; width: 1.4em; height: 1.4em; padding: .2em; background-color: silver; border-radius: 50%; }
+.rtg.rtg-selector:hover > .rating-gui img[data-rating="1"] { left: .3em; top: 1.4em; }
+.rtg.rtg-selector:hover > .rating-gui img[data-rating="2"] { left: .9em; top: 2.8em; }
+.rtg.rtg-selector:hover > .rating-gui img[data-rating="3"] { left: 2.4em; top: 2.8em; }
+.rtg.rtg-selector:hover > .rating-gui img[data-rating="4"] { left: 2.9em; top: 1.4em; }
+.rtg.rtg-selector:hover > .rating-gui img[data-rating="5"] { left: 1.6em; top: .3em; }
+</style>
+<script>
+var ratingSelectors = document.querySelectorAll('.rtg.rtg-selector');
+<?php $ratingIcons = array_map(function($i) { return '<img class="selector" data-rating="' . $i . '" title="rating ' . $i . '/5" src="' . $this->url->get("/img/rtg/status-$i.png") . '" />'; }, range(1,5)); ?>
+var ratingIcons = <?php echo json_encode($ratingIcons); ?>;
+var ratingGui = ratingIcons.join('');
+for (var i = 0; i < ratingSelectors.length; i++) {
+  addRatingSelector(ratingSelectors[i]);
+}
+function addRatingSelector(root) {
+    var currentRating = root.getAttribute('data-rating');
+    var currentRatingIcon = (currentRating != '?') ? ratingIcons[currentRating - 1] : '?';
+    root.innerHTML = '<div class="current-state">' + currentRatingIcon + '</div><div class="rating-gui open">' + ratingGui + '</div>';
+    var controls = root.querySelectorAll('img.selector');
+    // Events:
+    // touchstart => open, touchend => select?
+    for (var i = 0; i < controls.length; i++) {
+      controls[i].addEventListener('click', function(event) {
+        var newValue = this.getAttribute('data-rating');
+        var root = this;
+        while (!root.matches('.rtg.rtg-selector')) { root = root.parentElement; }
+
+        // set new value on parent
+        root.setAttribute('data-rating', newValue);
+        root.querySelector('.current-state').innerHTML = ratingIcons[newValue - 1];
+        // store new value in DB
+        var movieID = root.getAttribute('data-movie');
+        myAjax('', {action: 'change-rating', movie_id: movieID, rating: newValue}, 'POST');
+      });
+    }
+}
+function myAjax(url, params, method) {
+    if (method == undefined) method = 'POST';
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.send(getQueryString(params));
+}
+function getQueryString(obj) {
+  var str = [];
+  for(var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
+</script>
+
