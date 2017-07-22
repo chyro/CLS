@@ -66,7 +66,7 @@ try {
     include("../app/config/routes.php");
 
     //DB Settings
-    $config['di']->set('mongo', function() use ($config) {
+    $config['di']->set('mongo', function() use ($localConfig) {
         /**
          * Migrating from Phalcon 2, PHP 5, MongoClient to Phalcon 3, PHP 7, MongoDB...
          * PHP 7 does not support MongoClient, Phalcon does not support MongoDB. Possible workarounds include:
@@ -77,7 +77,7 @@ try {
          */
         //$mongo = new MongoClient();
         $mongoClient = new \Phalcon\Db\Adapter\MongoDB\Client();
-        $db = $mongoClient->selectDatabase($config->database->name);
+        $db = $mongoClient->selectDatabase($localConfig->database->name);
         return $db;
     }, true);
 

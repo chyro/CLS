@@ -1,3 +1,6 @@
 [Movie API]
 TheMovieDBAPIKey = xxxxxxxxxxxxxxxxxxx
 
+[database]
+name             = watchlist
+
