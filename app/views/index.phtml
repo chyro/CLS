@@ -17,11 +17,14 @@ $user = $this->session->getUser();
       </li>
     </ul>
     <ul>
-      <li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li>
+      <!-- always-on links: things like docs, help, github etc -->
+      <!-- li><a href="<?php echo $this->url->get(['for' => 'top']); ?>">Top</a></li -->
       <?php if (empty($user)): ?>
+      <!-- logged out links: login pages -->
       <li><a href="<?php echo $this->url->get(['for' => 'login']); ?>">Login</a></li>
       <li><a href="<?php echo $this->url->get(['for' => 'register']); ?>">Register</a></li>
       <?php else: ?>
+      <!-- logged in links: user features -->
       <li><a href="<?php echo $this->url->get(['for' => 'watchlist top']); ?>">Watchlist</a></li>
       <li class="menu-item">
         <i class="fa fa-user"></i> <?php echo $user->name; ?>

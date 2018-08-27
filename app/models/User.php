@@ -80,6 +80,8 @@ class User extends \Phalcore\Models\Mongo
             // just watched it: remove from watchlist, add to watched list
             $this->removeFromList($movie, 'watchlist');
         }
+//TODO: likewise, if adding to watchlist and the movie was recommended by a friend, remove from "recommended" list
+//Also, don't add to "recommended" if already watched or to watch
 
         // TODO: if the user has a Google Cal set up, and the list is 'watched', add an event on the Cal
 

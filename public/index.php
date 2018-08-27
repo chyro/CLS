@@ -7,29 +7,30 @@ TODO:
 - healcheck? => check \Phalcon is loaded, check Mongo is loaded
 - Layouts
 - add CSS / JS based on controller / action
-- if Dev, if file.LESS newer than file.css, compile LESS
-- headlink / headscript, with optional merger / minifier
 */
 
-define('BASE_DIR', dirname(__DIR__));
-define('APP_DIR', BASE_DIR . '/app');
+define('BASE_DIR', rtrim(dirname(__DIR__), '/') . '/');
+define('APP_DIR', BASE_DIR . 'app/');
+define('BASE_URL', rtrim(dirname($_SERVER["SCRIPT_NAME"]), '/') . '/'); // hoping to handle root and subfolder installs // PHP_SELF seems to work as well
+//TODO: make sure BASE_DIR and APP_DIR always have a trailing slash
 
 try {
 
-    $config = new \Phalcon\Config\Adapter\Ini(APP_DIR . '/config/config.ini');
-    $localConfig = new \Phalcon\Config\Adapter\Ini(APP_DIR . '/config/config.local.ini');
+    $config = new \Phalcon\Config\Adapter\Ini(APP_DIR . 'config/config.ini');
+    $localConfig = new \Phalcon\Config\Adapter\Ini(APP_DIR . 'config/config.local.ini');
 
     //Register an autoloader
     $loader = new \Phalcon\Loader();
     $loader->registerNamespaces( [
-        'Watchlist\Controllers' => BASE_DIR . '/' . $config->application->controllersDir,
-        'Watchlist\Views' => BASE_DIR . '/' . $config->application->viewsDir,
-        'Watchlist\Models' => BASE_DIR . '/' . $config->application->modelsDir,
-        'Watchlist' => BASE_DIR . '/' . $config->application->appLibDir,
-        'Phalcore' => BASE_DIR . '/' . $config->application->librariesDir . 'Phalcore/',
-        'Movies' => BASE_DIR . '/' . $config->application->librariesDir . 'Movies/',
-        'Phalcon' => BASE_DIR . '/' . $config->application->vendorsDir . 'phalcon/incubator/Library/Phalcon/',
-        'Leafo\ScssPhp' => BASE_DIR . '/' . $config->application->vendorsDir . 'leafo/scssphp/src/',
+        'Watchlist\Controllers' => BASE_DIR . $config->application->controllersDir,
+        'Watchlist\Views' => BASE_DIR . $config->application->viewsDir,
+        'Watchlist\Models' => BASE_DIR . $config->application->modelsDir,
+        'Watchlist' => BASE_DIR . $config->application->appLibDir,
+        'Phalcore' => BASE_DIR . $config->application->librariesDir . 'Phalcore/',
+        'Movies' => BASE_DIR . $config->application->librariesDir . 'Movies/',
+        'Phalcon' => BASE_DIR . $config->application->vendorsDir . 'phalcon/incubator/Library/Phalcon/',
+        'Leafo\ScssPhp' => BASE_DIR . $config->application->vendorsDir . 'leafo/scssphp/src/',
+        'Erusev\Parsedown' => BASE_DIR . $config->application->vendorsDir . 'erusev/parsedown/',
         ] )->register();
 
     //Create a DI
@@ -47,7 +48,9 @@ try {
     //Setup the view component
     $config['di']->set('view', function() use ($config) {
         $view = new \Phalcon\Mvc\View();
-        $view->setViewsDir(BASE_DIR . '/' . $config->application->viewsDir);
+        $view->setViewsDir(BASE_DIR . $config->application->viewsDir);
+        //$view->setLayoutsDir(BASE_DIR . $config->application->viewsDir . 'layout/'); // TODO: make sure BASE_DIR, and every other dir, always has a final /
+        //$view->setLayout('index');
         return $view;
     });
 
@@ -63,7 +66,7 @@ try {
     });
 
     //Route Settings
-    include("../app/config/routes.php");
+    include(APP_DIR . "config/routes.php");
 
     //DB Settings
     $config['di']->set('mongo', function() use ($localConfig) {
@@ -87,9 +90,7 @@ try {
 
     $config['di']->set('url', function() {
         $url = new \Phalcon\Mvc\Url();
-        $base = dirname($_SERVER["SCRIPT_NAME"]); // hoping to handle root and subfolder installs // PHP_SELF seems to work as well
-        $base = rtrim($base, '/') . '/'; // making sure there is always a trailing slash
-        $url->setBaseUri($base);
+        $url->setBaseUri(BASE_URL);
         return $url;
     });
 
